@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aurora Chat — Minecraft chat mod</title>
+<meta name="description" content="A beautiful, smooth and customizable chat for Minecraft (Fabric, client-side): movable window, 30+ themes, G/L channels, tabs, translator, smart search and history.">
+<meta property="og:title" content="Aurora Chat">
+<meta property="og:description" content="Beautiful, smooth and customizable chat for Minecraft (Fabric, client-side).">
+<meta property="og:image" content="media/chat.png">
+<link rel="icon" href="media/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0c14;
+    --bg2: #11131f;
+    --card: #151826;
+    --line: #262a3d;
+    --text: #e9ebf5;
+    --sub: #a3a8c3;
+    --muted: #6f7491;
+    --violet: #b18cff;
+    --teal: #4fe3c1;
+    --blue: #6cb4ff;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  img.shot {
+    display: block; width: 100%; height: auto;
+    border-radius: 12px; border: 1px solid var(--line);
+    image-rendering: pixelated; background: #000;
+  }
+
+  /* шапка */
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    background: rgba(11, 12, 20, .72); border-bottom: 1px solid var(--line);
+  }
+  header.top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 18px "Space Grotesk", Inter, sans-serif; color: var(--text); }
+  .brand img { width: 28px; height: 28px; image-rendering: pixelated; }
+  .brand:hover { text-decoration: none; }
+  nav.links { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  nav.links a { color: var(--sub); padding: 6px 10px; border-radius: 8px; font-size: 14px; }
+  nav.links a:hover { color: var(--text); background: var(--card); text-decoration: none; }
+  .lang {
+    border: 1px solid var(--line); background: var(--card); color: var(--text);
+    border-radius: 8px; padding: 5px 10px; font: 600 13px Inter, sans-serif; cursor: pointer;
+  }
+
+  /* главный экран */
+  .hero { position: relative; overflow: hidden; padding: 72px 0 40px; }
+  .hero::before {
+    content: ""; position: absolute; inset: -40% -10% auto -10%; height: 520px; z-index: -1;
+    background:
+      radial-gradient(40% 60% at 25% 40%, rgba(177, 140, 255, .35), transparent 70%),
+      radial-gradient(35% 55% at 70% 30%, rgba(79, 227, 193, .25), transparent 70%),
+      radial-gradient(30% 50% at 50% 70%, rgba(108, 180, 255, .2), transparent 70%);
+    filter: blur(20px);
+    animation: drift 14s ease-in-out infinite alternate;
+  }
+  @keyframes drift { from { transform: translateX(-3%) } to { transform: translateX(3%) } }
+  @media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } html { scroll-behavior: auto; } }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: center; }
+  h1 {
+    font: 700 clamp(40px, 6vw, 64px)/1.05 "Space Grotesk", Inter, sans-serif; margin: 0 0 16px;
+    background: linear-gradient(90deg, var(--violet), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lead { font-size: 19px; color: var(--sub); margin: 0 0 28px; max-width: 30em; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px;
+    font-weight: 600; font-size: 15px; border: 1px solid var(--line); color: var(--text); background: var(--card);
+  }
+  .btn:hover { text-decoration: none; border-color: #3a3f5a; }
+  .btn.primary { background: linear-gradient(90deg, #8f6bff, #3fcfae); border: 0; color: #0b0c14; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .meta { margin-top: 18px; color: var(--muted); font-size: 14px; }
+  .hero-media { position: relative; }
+  .hero-media img { box-shadow: 0 30px 80px rgba(0, 0, 0, .55), 0 0 0 1px rgba(177, 140, 255, .15); }
+
+  /* разделы */
+  section { padding: 64px 0; border-top: 1px solid var(--line); }
+  h2 { font: 700 32px/1.2 "Space Grotesk", Inter, sans-serif; margin: 0 0 10px; }
+  .sec-lead { color: var(--sub); margin: 0 0 28px; max-width: 42em; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+  .split.rev > :first-child { order: 2; }
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .feature { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+  .feature .ico {
+    width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; font-size: 19px; margin-bottom: 12px;
+    background: rgba(177, 140, 255, .12); color: var(--violet);
+  }
+  .feature:nth-child(3n+2) .ico { background: rgba(79, 227, 193, .12); color: var(--teal); }
+  .feature:nth-child(3n) .ico { background: rgba(108, 180, 255, .12); color: var(--blue); }
+  .feature h3 { margin: 0 0 6px; font-size: 16px; }
+  .feature p { margin: 0; color: var(--sub); font-size: 14.5px; }
+  ul.ticks { list-style: none; padding: 0; margin: 0; }
+  ul.ticks li { padding: 6px 0 6px 28px; position: relative; color: var(--sub); }
+  ul.ticks li::before { content: "✦"; position: absolute; left: 4px; color: var(--teal); }
+  ul.ticks b { color: var(--text); font-weight: 600; }
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .gallery figure { margin: 0; }
+  .gallery figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
+  .stat b { display: block; font: 700 28px "Space Grotesk", Inter, sans-serif; color: var(--teal); font-variant-numeric: tabular-nums; }
+  .stat span { color: var(--sub); font-size: 14px; }
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ol.steps li { counter-increment: s; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 14px 56px; position: relative; color: var(--sub); }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 16px; top: 12px; width: 26px; height: 26px; border-radius: 8px;
+    display: grid; place-items: center; font-weight: 700; font-size: 14px; color: #0b0c14; background: var(--violet);
+  }
+  ol.steps b { color: var(--text); }
+  code { font: 14px ui-monospace, SFMono-Regular, Consolas, monospace; background: #1c2032; padding: 2px 6px; border-radius: 6px; color: var(--text); }
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; }
+
+  [data-ru] { display: none; }
+  html[lang="ru"] [data-en] { display: none; }
+  html[lang="ru"] [data-ru] { display: revert; }
+
+  @media (max-width: 860px) {
+    .hero { padding-top: 40px; }
+    .hero-grid, .split { grid-template-columns: 1fr; gap: 24px; }
+    .split.rev > :first-child { order: 0; }
+    .features, .gallery { grid-template-columns: 1fr 1fr; }
+    nav.links a.hide-sm { display: none; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .features, .gallery, .stats { grid-template-columns: 1fr; }
+    section { padding: 44px 0; }
+    h2 { font-size: 26px; }
+    .lead { font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="media/icon.png" alt="">Aurora Chat</a>
+    <nav class="links">
+      <a class="hide-sm" href="#features"><span data-en>Features</span><span data-ru>Возможности</span></a>
+      <a class="hide-sm" href="#themes"><span data-en>Themes</span><span data-ru>Темы</span></a>
+      <a class="hide-sm" href="#install"><span data-en>Install</span><span data-ru>Установка</span></a>
+      <a href="https://github.com/binoplw/aurora-chat">GitHub</a>
+      <button class="lang" id="lang" type="button" aria-label="Switch language">RU</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1>Aurora Chat</h1>
+        <p class="lead">
+          <span data-en>A beautiful, smooth and highly customizable chat for Minecraft. Move it, resize it, theme it — and it never lags.</span>
+          <span data-ru>Красивый, плавный и настраиваемый чат для Minecraft. Двигай, растягивай, меняй тему — и ничего не лагает.</span>
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="https://modrinth.com/mod/aurora-chat"><span data-en>Download on Modrinth</span><span data-ru>Скачать на Modrinth</span></a>
+          <a class="btn" href="https://github.com/binoplw/aurora-chat"><span data-en>Source code</span><span data-ru>Исходники</span></a>
+        </div>
+        <div class="meta">Fabric · Minecraft 26.1.2 · <span data-en>client-side · MIT</span><span data-ru>только клиент · MIT</span></div>
+      </div>
+      <div class="hero-media">
+        <img class="shot" src="media/themes.gif" width="854" height="480" alt="Aurora Chat cycling through themes: Discord, Aurora, Telegram, Neon, Sunset, iMessage, Terminal, Business">
+      </div>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <h2><span data-en>Everything a chat should have</span><span data-ru>Всё, что должно быть в чате</span></h2>
+      <p class="sec-lead"><span data-en>Every feature can be turned off. Settings: <code>/achat</code> or the ⚙ button in the chat header.</span><span data-ru>Любую функцию можно выключить. Настройки — <code>/achat</code> или ⚙ в шапке чата.</span></p>
+      <div class="features">
+        <div class="feature"><div class="ico">⠿</div><h3><span data-en>Your window</span><span data-ru>Своё окно</span></h3>
+          <p><span data-en>Drag and resize like a messenger. Compact, Discord-like or Messenger layout with bubbles.</span><span data-ru>Двигай и растягивай как в мессенджере. Компактная раскладка, как в Discord или пузыри.</span></p></div>
+        <div class="feature"><div class="ico">◐</div><h3><span data-en>30+ themes</span><span data-ru>30+ тем</span></h3>
+          <p><span data-en>Discord, Telegram, iMessage, Twitch, Steam, Spotify and more. Share your own theme as a code.</span><span data-ru>Discord, Telegram, iMessage, Twitch, Steam, Spotify и другие. Своей темой можно поделиться кодом.</span></p></div>
+        <div class="feature"><div class="ico">G</div><h3><span data-en>Channels &amp; tabs</span><span data-ru>Каналы и вкладки</span></h3>
+          <p><span data-en>Global / local badges, tabs for DMs, clan and system, your own tabs and separate windows.</span><span data-ru>Значки G / L, вкладки ЛС, клан, система, свои вкладки и отдельные окна.</span></p></div>
+        <div class="feature"><div class="ico">⇄</div><h3><span data-en>Translator</span><span data-ru>Переводчик</span></h3>
+          <p><span data-en>Right-click any message to translate it, or translate what you type with one button.</span><span data-ru>ПКМ по сообщению — перевод, а кнопка ⇄ переводит то, что пишешь ты.</span></p></div>
+        <div class="feature"><div class="ico">⌕</div><h3><span data-en>Smart search &amp; history</span><span data-ru>Поиск и история</span></h3>
+          <p><span data-en>Filters like <code>nick:</code> <code>channel:</code> <code>date:</code>, chat kept across restarts, logs by server and day.</span><span data-ru>Фильтры <code>ник:</code> <code>канал:</code> <code>дата:</code>, чат сохраняется между запусками, журнал по дням.</span></p></div>
+        <div class="feature"><div class="ico">&amp;</div><h3><span data-en>Colors &amp; gradients</span><span data-ru>Цвета и градиенты</span></h3>
+          <p><span data-en>A palette with HEX colors and gradients in two clicks, live preview of your message.</span><span data-ru>Палитра с HEX и градиентами в два клика, предпросмотр сообщения.</span></p></div>
+        <div class="feature"><div class="ico">⏱</div><h3><span data-en>Helpers</span><span data-ru>Помощники</span></h3>
+          <p><span data-en>Scheduled messages, reminders, drafts, templates, AFK auto-reply, auto-greetings.</span><span data-ru>Отложенные сообщения, напоминания, черновики, шаблоны, АФК-автоответчик, приветствия.</span></p></div>
+        <div class="feature"><div class="ico">⊘</div><h3><span data-en>Clean chat</span><span data-ru>Чистый чат</span></h3>
+          <p><span data-en>Anti-spam, word filter, ignore list, merged repeats ×N, compact joins and leaves.</span><span data-ru>Антиспам, фильтр слов, игнор, склейка повторов ×N, компактные входы и выходы.</span></p></div>
+        <div class="feature"><div class="ico">✦</div><h3><span data-en>Player wheel</span><span data-ru>Круговое меню</span></h3>
+          <p><span data-en>Look at a player and hold G — hug, headpat or any command, with little effects.</span><span data-ru>Наведись на игрока и держи G — обнять, погладить или любая команда, со спецэффектами.</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="smooth">
+    <div class="wrap split">
+      <div>
+        <h2><span data-en>Smooth, not laggy</span><span data-ru>Плавно и без лагов</span></h2>
+        <p class="sec-lead"><span data-en>New messages slide in and gently lift the old ones. Everything moves with sub-pixel precision — no stepping, even at high GUI scale.</span><span data-ru>Новые сообщения плавно выезжают и мягко поднимают старые. Всё движется с точностью до долей пикселя — без «ступенек» даже на крупном масштабе.</span></p>
+        <div class="stats">
+          <div class="stat"><b>~1 ms</b><span data-en>per frame, chat open</span><span data-ru>на кадр, чат открыт</span></div>
+          <div class="stat"><b>2000</b><span data-en>messages of history</span><span data-ru>сообщений истории</span></div>
+          <div class="stat"><b>0</b><span data-en>freezes on spam</span><span data-ru>фризов при спаме</span></div>
+        </div>
+      </div>
+      <img class="shot" src="media/messages.gif" width="854" height="480" loading="lazy" alt="New chat messages smoothly sliding in">
+    </div>
+  </section>
+
+  <section id="translate">
+    <div class="wrap split rev">
+      <div>
+        <h2><span data-en>Talk to anyone</span><span data-ru>Общайся с кем угодно</span></h2>
+        <ul class="ticks">
+          <li data-en><b>Right-click → Translate</b> — the translation appears right under the message</li>
+          <li data-ru><b>ПКМ → «Перевести»</b> — перевод появится прямо под сообщением</li>
+          <li data-en><b>⇄ button</b> — translates what you type before you send it</li>
+          <li data-ru><b>Кнопка ⇄</b> — переводит то, что ты пишешь, до отправки</li>
+          <li data-en><b>Auto-translate</b> — optional, for messages in another script</li>
+          <li data-ru><b>Автоперевод</b> — по желанию, для сообщений на другой письменности</li>
+          <li data-en><b>English and Russian</b> interface, follows your game language</li>
+          <li data-ru>Интерфейс <b>на русском и английском</b>, как язык игры</li>
+        </ul>
+      </div>
+      <img class="shot" src="media/translate.png" width="854" height="480" loading="lazy" alt="A Portuguese message with its English translation shown below">
+    </div>
+  </section>
+
+  <section id="themes">
+    <div class="wrap">
+      <h2><span data-en>Settings that make sense</span><span data-ru>Понятные настройки</span></h2>
+      <p class="sec-lead"><span data-en>One window with a live preview, themes for the settings window itself, and plain words instead of cryptic options.</span><span data-ru>Одно окно с живым предпросмотром, свои темы для самого окна настроек и простые слова вместо непонятных опций.</span></p>
+      <div class="gallery">
+        <figure><img class="shot" src="media/settings-themes.png" width="854" height="480" loading="lazy" alt="Themes settings"><figcaption><span data-en>Themes and theme codes</span><span data-ru>Темы и коды тем</span></figcaption></figure>
+        <figure><img class="shot" src="media/settings-features.png" width="854" height="480" loading="lazy" alt="All features list"><figcaption><span data-en>All features in one list</span><span data-ru>Все функции одним списком</span></figcaption></figure>
+        <figure><img class="shot" src="media/settings-colors.png" width="854" height="480" loading="lazy" alt="Colors and gradients settings"><figcaption><span data-en>Colors and gradients</span><span data-ru>Цвета и градиенты</span></figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2><span data-en>Install</span><span data-ru>Установка</span></h2>
+      <ol class="steps">
+        <li data-en>Install <b>Fabric Loader</b> for Minecraft 26.1.2 and the <a href="https://modrinth.com/mod/fabric-api">Fabric API</a> mod.</li>
+        <li data-ru>Поставь <b>Fabric Loader</b> для Minecraft 26.1.2 и мод <a href="https://modrinth.com/mod/fabric-api">Fabric API</a>.</li>
+        <li data-en>Download <b>Aurora Chat</b> from <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> and put the jar into your <code>mods</code> folder.</li>
+        <li data-ru>Скачай <b>Aurora Chat</b> на <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> и положи jar в папку <code>mods</code>.</li>
+        <li data-en>Open the game, press <b>T</b> — and type <code>/achat</code> for settings. <a href="https://modrinth.com/mod/modmenu">Mod Menu</a> is optional.</li>
+        <li data-ru>Запусти игру, нажми <b>T</b>, настройки — <code>/achat</code>. <a href="https://modrinth.com/mod/modmenu">Mod Menu</a> — по желанию.</li>
+      </ol>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Aurora Chat · MIT · <span data-en>made by</span><span data-ru>автор</span> PrimLixe</span>
+    <span><a href="https://github.com/binoplw/aurora-chat/issues"><span data-en>Report a bug</span><span data-ru>Сообщить о баге</span></a> · <a href="https://github.com/binoplw/aurora-chat/blob/main/CHANGELOG.md">Changelog</a></span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('lang');
+    function set(l) {
+      root.lang = l;
+      btn.textContent = l === 'ru' ? 'EN' : 'RU';
+      try { localStorage.setItem('aurora-lang', l); } catch (e) {}
+    }
+    var saved = null;
+    try { saved = localStorage.getItem('aurora-lang'); } catch (e) {}
+    set(saved || ((navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en'));
+    btn.addEventListener('click', function () { set(root.lang === 'ru' ? 'en' : 'ru'); });
+  })();
+</script>
+</body>
+</html>

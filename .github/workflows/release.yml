@@ -1,0 +1,46 @@
+name: Release
+
+# git tag v2.27.0 && git push --tags  →  GitHub Release with the jar (+ Modrinth, if the MODRINTH_TOKEN secret is set)
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+      - uses: gradle/actions/setup-gradle@v4
+      - run: chmod +x gradlew
+      - name: Check tag matches gradle.properties
+        run: |
+          v=$(grep '^version=' gradle.properties | cut -d= -f2)
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "tag ${GITHUB_REF_NAME} != version $v in gradle.properties"; exit 1; }
+      - name: Build and test
+        run: |
+          ./gradlew build --console=plain
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --console=plain
+      - name: Release notes from CHANGELOG.md
+        run: |
+          v=$(grep '^version=' gradle.properties | cut -d= -f2)
+          awk -v v="$v" '$0 ~ "^## "v"( |$)" {f=1; next} /^## / {f=0} f' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "Aurora Chat $v" > notes.md
+      - name: Rename jar
+        run: for f in build/libs/*-public.jar; do mv "$f" "${f%-public.jar}.jar"; done
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Aurora Chat ${{ github.ref_name }}
+          body_path: notes.md
+          files: build/libs/aurora-chat-*.jar
+      - name: Publish to Modrinth
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        if: env.MODRINTH_TOKEN != ''
+        run: python3 pack/publish_modrinth.py --skip-test

@@ -820,7 +820,7 @@ public final class ChatHud {
 			int dot = cur.kind() == Kind.GLOBAL ? Channels.color('G') : cur.kind() == Kind.LOCAL ? Channels.color('L') : allF ? (allCh != 0 ? Channels.color(allCh) : ON_GREEN) : UI.accent();
 			if (allF && chFlash > 0) UI.round(g, (int) X0 + 4, tb0 + 3, (int) X0 + 12, tb0 + 11, 4, UI.alpha(dot, 0.6f * chFlash * ta));
 			UI.round(g, (int) X0 + 6, tb0 + 5, (int) X0 + 10, tb0 + 9, 2, UI.alpha(dot, ta));
-			String tip = allF ? (allCh != 0 ? net.primlixe.aurorachat.ui.I18n.t("Все · только канал ") + Channels.label(allCh) : net.primlixe.aurorachat.ui.I18n.t("Все · каналы ") + Channels.label('G') + net.primlixe.aurorachat.ui.I18n.t(" и ") + Channels.label('L')) : cur.tip();
+			String tip = allF ? (allCh != 0 ? net.primlixe.aurorachat.ui.I18n.t("Все · только канал ") + Channels.label(allCh) : net.primlixe.aurorachat.ui.I18n.f("Все · каналы %s и %s", Channels.label('G'), Channels.label('L'))) : cur.tip();
 			int online = mc.getConnection() == null ? 0 : mc.getConnection().getOnlinePlayers().size();
 			String info = (!net.primlixe.aurorachat.Edition.PUBLIC && StaffWatch.onlineCount() > 0 ? "★ " + StaffWatch.onlineCount() + "  ·  " : "") + (AfkResponder.isAfk() ? net.primlixe.aurorachat.ui.I18n.t("☾ АФК  ·  ") : "") + (AntiSpam.hiddenCount() > 0 ? "⊘ " + AntiSpam.hiddenCount() + "  ·  " : "") + "☺ " + online + "  ·  " + net.primlixe.auroralib.text.TimeFmt.now("HH:mm");
 			// подпись слева не заезжает на счётчики справа

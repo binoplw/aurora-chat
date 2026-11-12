@@ -16,6 +16,7 @@ import net.primlixe.aurorachat.gui.ChatSettingsScreen;
 public class PublicSmokeTest implements FabricClientGameTest {
 	@Override
 	public void runTest(ClientGameTestContext ctx) {
+		if ("1".equals(System.getenv("AURORA_SHOWCASE"))) return; // снимаем витрину — только ShowcaseTest
 		if (!net.primlixe.aurorachat.Edition.PUBLIC) return;
 		try (TestSingleplayerContext sp = ctx.worldBuilder().setUseConsistentSettings(true).create()) {
 			ctx.waitTicks(40);

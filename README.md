@@ -6,10 +6,15 @@
 Красивый, плавный и настраиваемый чат для Minecraft (Fabric, только клиент).</p>
 
 <p align="center">
+  <a href="https://binoplw.github.io/aurora-chat/">Website / Сайт</a> ·
   <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> ·
   <a href="../../issues">Bug reports / Баги</a> ·
   <a href="CHANGELOG.md">Changelog</a>
 </p>
+
+<p align="center"><a href="https://github.com/binoplw/aurora-chat/actions/workflows/build.yml"><img src="https://github.com/binoplw/aurora-chat/actions/workflows/build.yml/badge.svg" alt="Build"></a></p>
+
+<p align="center"><img src="docs/media/themes.gif" width="640" alt="Aurora Chat themes"></p>
 
 ---
 

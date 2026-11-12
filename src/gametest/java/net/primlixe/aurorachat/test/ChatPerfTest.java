@@ -34,6 +34,7 @@ public class ChatPerfTest implements FabricClientGameTest {
 
 	@Override
 	public void runTest(ClientGameTestContext ctx) {
+		if ("1".equals(System.getenv("AURORA_SHOWCASE"))) return; // снимаем витрину — только ShowcaseTest
 		try (TestSingleplayerContext sp = ctx.worldBuilder().setUseConsistentSettings(true).create()) {
 			ctx.waitTicks(40); // ждём прогрузку (API ожидания чанков разное в 26.1/26.2)
 			ctx.runOnClient(mc -> {

@@ -5,7 +5,7 @@
   "name": "Aurora Chat Visual Test",
   "environment": "client",
   "entrypoints": {
-    "fabric-client-gametest": ["net.primlixe.aurorachat.test.ChatPerfTest", "net.primlixe.aurorachat.test.PublicSmokeTest"]
+    "fabric-client-gametest": ["net.primlixe.aurorachat.test.ChatPerfTest", "net.primlixe.aurorachat.test.PublicSmokeTest", "net.primlixe.aurorachat.test.ShowcaseTest"]
   },
   "depends": { "aurorachat": "*" }
 }
