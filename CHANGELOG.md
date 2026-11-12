@@ -1,5 +1,12 @@
 # Aurora Chat — изменения
 
+## 2.27.0
+
+- Minecraft 26.1–26.1.2, 26.2 and 26.3 are supported
+- Aurora Chat+: the basic chat stays free (window, 3 themes, G / L channels, All / G / L tabs); a one-time key unlocks everything else — `/achat shop`, `/achat key <key>`
+- Поддержка Minecraft 26.1–26.1.2, 26.2 и 26.3
+- Aurora Chat+: базовый чат остаётся бесплатным (окно, 3 темы, каналы G / L, вкладки «Все» / G / L); разовый ключ открывает всё остальное — `/achat shop`, `/achat key <ключ>`
+
 ## 2.26.0
 
 - English interface: the mod follows the game language (or pick it in Settings window → Language)

@@ -1,5 +1,8 @@
 package net.primlixe.aurorachat.gui;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.primlixe.aurorachat.compat.Mc;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
@@ -20,7 +23,6 @@ import net.primlixe.aurorachat.ui.UI;
 import net.primlixe.aurorachat.ui.Widgets.Field;
 import net.primlixe.aurorachat.ui.Widgets.Pill;
 import net.primlixe.aurorachat.ui.Widgets.Style;
-import org.lwjgl.glfw.GLFW;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -79,7 +81,7 @@ public class ConsoleScreen extends Screen {
 		bx += addButton(bx, () -> net.primlixe.aurorachat.ui.I18n.t("✕ Очистить"), () -> { ConsoleLog.clear(); scroll = smooth = 0; }) + 4;
 		addButton(bx, () -> net.primlixe.aurorachat.ui.I18n.t("⌂ Логи"), () -> {
 			try { java.nio.file.Files.createDirectories(ChatLog.root()); } catch (Exception ignored) { }
-			net.minecraft.util.Util.getPlatform().openPath(ChatLog.root());
+			Mc.openPath(ChatLog.root());
 		});
 		input = new EditBox(font, x0 + 14, height - 18, x1 - x0 - 16, 12, Component.literal(net.primlixe.aurorachat.ui.I18n.t("Ввод")));
 		input.setBordered(false);
@@ -264,22 +266,22 @@ public class ConsoleScreen extends Screen {
 	@Override
 	public boolean keyPressed(KeyEvent e) {
 		if (input.isFocused()) {
-			if (e.key() == GLFW.GLFW_KEY_ENTER || e.key() == GLFW.GLFW_KEY_KP_ENTER) { send(); return true; }
-			if (e.key() == GLFW.GLFW_KEY_UP && !HISTORY.isEmpty()) {
+			if (e.key() == InputConstants.KEY_RETURN || e.key() == InputConstants.KEY_NUMPADENTER) { send(); return true; }
+			if (e.key() == InputConstants.KEY_UP && !HISTORY.isEmpty()) {
 				histPos = histPos < 0 ? HISTORY.size() - 1 : Math.max(0, histPos - 1);
 				input.setValue(HISTORY.get(histPos));
 				return true;
 			}
-			if (e.key() == GLFW.GLFW_KEY_DOWN && histPos >= 0) {
+			if (e.key() == InputConstants.KEY_DOWN && histPos >= 0) {
 				histPos++;
 				input.setValue(histPos >= HISTORY.size() ? "" : HISTORY.get(histPos));
 				if (histPos >= HISTORY.size()) histPos = -1;
 				return true;
 			}
 		}
-		if (e.key() == GLFW.GLFW_KEY_PAGE_UP) { scroll += rows() - 1; return true; }
-		if (e.key() == GLFW.GLFW_KEY_PAGE_DOWN) { scroll = Math.max(0, scroll - rows() + 1); return true; }
-		if (e.key() == GLFW.GLFW_KEY_END && !input.isFocused()) { scroll = 0; return true; }
+		if (e.key() == InputConstants.KEY_PAGEUP) { scroll += rows() - 1; return true; }
+		if (e.key() == InputConstants.KEY_PAGEDOWN) { scroll = Math.max(0, scroll - rows() + 1); return true; }
+		if (e.key() == InputConstants.KEY_END && !input.isFocused()) { scroll = 0; return true; }
 		return super.keyPressed(e);
 	}
 

@@ -33,6 +33,7 @@ public class PublicSmokeTest implements FabricClientGameTest {
 				var all = ((net.primlixe.aurorachat.mixin.ChatComponentAccessor) net.primlixe.aurorachat.compat.Mc.chat()).aurorachat$all();
 				for (var m : all) if (m.content().getString().contains("[= 46]")) throw new AssertionError("В публичной сборке есть ответ на викторину");
 				var bob = all.stream().filter(m -> m.content().getString().contains("hello everyone")).findFirst().orElseThrow();
+				if (!net.primlixe.aurorachat.premium.Premium.BUILT_IN) return; // версия с GitHub: переводчик — в Aurora Chat+
 				var r = net.primlixe.aurorachat.chat.Translator.parse("[[[\"Всем привет, как дела?\",\"x\",null,null,10]],null,\"en\"]");
 				if (!net.primlixe.aurorachat.chat.Translator.apply(bob.content(), "hello everyone, how are you?", r, "ru")) throw new AssertionError("перевод не применился");
 			});

@@ -1,5 +1,7 @@
 package net.primlixe.aurorachat;
 
+import net.primlixe.aurorachat.compat.Mc;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -22,7 +24,6 @@ import net.primlixe.aurorachat.chat.ChatLogScreen;
 import net.primlixe.aurorachat.chat.ChatToasts;
 import net.primlixe.aurorachat.config.ChatConfig;
 import net.primlixe.aurorachat.gui.ChatSettingsScreen;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +37,13 @@ public final class AuroraChatMod implements ClientModInitializer {
 
 	private static KeyMapping keyHistory, keySettings, keyChannel, keyConsole, keyCancel, keyPunishLog, keyWheel;
 	private static Screen pending;
+	private static int premiumTick;
 
 	@Override
 	public void onInitializeClient() {
 		ChatConfig.load();
+		net.primlixe.aurorachat.premium.Premium.load();
+		net.primlixe.aurorachat.premium.Premium.enforce(ChatConfig.get());
 		migrateLogs();
 		net.primlixe.aurorachat.chat.AutoJoin.load();
 		net.primlixe.aurorachat.chat.InputHistory.load();
@@ -76,15 +80,15 @@ public final class AuroraChatMod implements ClientModInitializer {
 		}));
 
 		KeyMapping.Category cat = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MOD_ID, "main"));
-		keyHistory = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.history", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, cat));
-		keySettings = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.settings", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, cat));
-		keyChannel = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.channel", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, cat));
-		keyConsole = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.console", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_GRAVE_ACCENT, cat));
+		keyHistory = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.history", Mc.KEYS, InputConstants.KEY_H, cat));
+		keySettings = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.settings", Mc.KEYS, InputConstants.UNKNOWN.getValue(), cat));
+		keyChannel = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.channel", Mc.KEYS, InputConstants.UNKNOWN.getValue(), cat));
+		keyConsole = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.console", Mc.KEYS, InputConstants.KEY_GRAVE, cat));
 		if (!net.primlixe.aurorachat.Edition.PUBLIC) { // модерация — только в личной сборке
-			keyCancel = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.cancel_punish", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_DELETE, cat));
-			keyPunishLog = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.punish_log", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, cat));
+			keyCancel = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.cancel_punish", Mc.KEYS, InputConstants.KEY_DELETE, cat));
+			keyPunishLog = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.punish_log", Mc.KEYS, InputConstants.UNKNOWN.getValue(), cat));
 		}
-		keyWheel = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.player_wheel", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_G, cat));
+		keyWheel = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.aurorachat.player_wheel", Mc.KEYS, InputConstants.KEY_G, cat));
 
 		// Круговое меню — в начале тика, до обработки клавиш игрой: если навёлся на игрока и меню открылось,
 		// «съедаем» нажатие у других клавиш на той же кнопке (в 26.1 на G стоят ванильные «Быстрые действия»).
@@ -113,6 +117,7 @@ public final class AuroraChatMod implements ClientModInitializer {
 		{
 			ChatConfig cfg = ChatConfig.get();
 			ChatConfig.tick();
+			if (++premiumTick % 20 == 0) net.primlixe.aurorachat.premium.Premium.enforce(cfg);
 			ChatCore.warmMeta(); // история после перезапуска разбирается понемногу, а не в кадре открытия чата
 			net.primlixe.aurorachat.chat.AutoGreet.tick();
 			net.primlixe.aurorachat.chat.AfkResponder.tick();
@@ -131,7 +136,7 @@ public final class AuroraChatMod implements ClientModInitializer {
 				int n = net.primlixe.aurorachat.chat.Moderation.cancelAll();
 				if (n > 0) msg(net.primlixe.aurorachat.ui.I18n.t("§aОтменено автонаказаний: ") + n);
 			}
-			while (keyHistory.consumeClick()) pending = new ChatLogScreen(null, "");
+			while (keyHistory.consumeClick()) pending = net.primlixe.aurorachat.premium.Premium.has() ? new ChatLogScreen(null, "") : new net.primlixe.aurorachat.premium.PremiumScreen(null);
 			while (keySettings.consumeClick()) pending = new ChatSettingsScreen(null);
 			while (keyChannel.consumeClick()) {
 				Channels.toggle();
@@ -147,7 +152,13 @@ public final class AuroraChatMod implements ClientModInitializer {
 	private static void registerCommands() {
 		ClientCommandRegistrationCallback.EVENT.register((d, ctx) -> d.register(ClientCommands.literal("achat")
 				.executes(c -> { pending = new ChatSettingsScreen(null); return 1; })
-				.then(ClientCommands.literal("history").executes(c -> { pending = new ChatLogScreen(null, ""); return 1; }))
+				.then(ClientCommands.literal("history").requires(s -> net.primlixe.aurorachat.premium.Premium.has()).executes(c -> { pending = new ChatLogScreen(null, ""); return 1; }))
+				.then(ClientCommands.literal("shop").executes(c -> { pending = new net.primlixe.aurorachat.premium.PremiumScreen(null); return 1; }))
+				.then(ClientCommands.literal("key").then(ClientCommands.argument("key", com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(c -> {
+					String err = net.primlixe.aurorachat.premium.Premium.activate(com.mojang.brigadier.arguments.StringArgumentType.getString(c, "key"));
+					msg(err == null ? net.primlixe.aurorachat.ui.I18n.t("§a✔ Aurora Chat+ активирован — все функции открыты. Спасибо!") : "§c" + net.primlixe.aurorachat.ui.I18n.t(err));
+					return 1;
+				})))
 				.then(ClientCommands.literal("g").executes(c -> { ChatConfig.get().channel = "G"; ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Канал: §fглобальный")); return 1; }))
 				.then(ClientCommands.literal("l").executes(c -> { ChatConfig.get().channel = "L"; ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Канал: §fлокальный")); return 1; }))
 				.then(ClientCommands.literal("reset").executes(c -> { ChatConfig.get().resetWindow(); ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Окно чата вернулось на место")); return 1; }))
@@ -160,12 +171,12 @@ public final class AuroraChatMod implements ClientModInitializer {
 						})
 						.then(ClientCommands.literal("on").executes(c -> { ChatConfig.get().chatGameAuto = true; ChatConfig.get().chatGameDelay = 0f; ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("§aАвтоответ на викторины включён — отвечаю сразу §7(/achat quiz delay 2 — с задержкой)")); return 1; }))
 						.then(ClientCommands.literal("delay").then(ClientCommands.argument("sec", com.mojang.brigadier.arguments.FloatArgumentType.floatArg(0, 30)).executes(c -> { float qd = com.mojang.brigadier.arguments.FloatArgumentType.getFloat(c, "sec"); ChatConfig.get().chatGameDelay = qd; ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Задержка автоответа: §f") + (qd < 0.05f ? net.primlixe.aurorachat.ui.I18n.t("сразу") : qd + net.primlixe.aurorachat.ui.I18n.t(" с"))); return 1; })))
-						.then(ClientCommands.literal("off").executes(c -> { ChatConfig.get().chatGameAuto = false; ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Автоответ на викторины выключен — остаётся кнопка [= ответ]")); return 1; })))				.then(ClientCommands.literal("afk").executes(c -> {
+						.then(ClientCommands.literal("off").executes(c -> { ChatConfig.get().chatGameAuto = false; ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Автоответ на викторины выключен — остаётся кнопка [= ответ]")); return 1; })))				.then(ClientCommands.literal("afk").requires(s -> net.primlixe.aurorachat.premium.Premium.has()).executes(c -> {
 					boolean on = net.primlixe.aurorachat.chat.AfkResponder.toggleManual();
 					msg(on ? net.primlixe.aurorachat.ui.I18n.t("☾ АФК включён — на личные ответит автоответчик") : net.primlixe.aurorachat.ui.I18n.t("АФК выключен, с возвращением!"));
 					return 1;
 				}))
-				.then(ClientCommands.literal("remind")
+				.then(ClientCommands.literal("remind").requires(s -> net.primlixe.aurorachat.premium.Premium.has())
 						.then(ClientCommands.literal("list").executes(c -> {
 							var l = ChatConfig.get().reminders;
 							if (l.isEmpty()) msg(net.primlixe.aurorachat.ui.I18n.t("Напоминаний нет"));
@@ -178,13 +189,13 @@ public final class AuroraChatMod implements ClientModInitializer {
 							msg(r == null ? net.primlixe.aurorachat.ui.I18n.t("§cНе понял время. Примеры: §f10m текст§c, §f1h30m текст§c, §f20:30 текст") : net.primlixe.aurorachat.ui.I18n.t("⏰ Напомню в ") + r);
 							return 1;
 						})))
-				.then(ClientCommands.literal("timer").then(ClientCommands.argument("time", com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(c -> {
+				.then(ClientCommands.literal("timer").requires(s -> net.primlixe.aurorachat.premium.Premium.has()).then(ClientCommands.argument("time", com.mojang.brigadier.arguments.StringArgumentType.greedyString()).executes(c -> {
 					String t = com.mojang.brigadier.arguments.StringArgumentType.getString(c, "time").trim();
 					String r = net.primlixe.aurorachat.chat.Reminders.add(t.split(" ")[0] + " Таймер " + t.split(" ")[0] + " вышел", "Таймер вышел");
 					msg(r == null ? net.primlixe.aurorachat.ui.I18n.t("§cПример: §f/achat timer 5m") : net.primlixe.aurorachat.ui.I18n.t("⏱ Таймер: ") + r);
 					return 1;
 				})))
-				.then(ClientCommands.literal("later")
+				.then(ClientCommands.literal("later").requires(s -> net.primlixe.aurorachat.premium.Premium.has())
 						.then(ClientCommands.literal("list").executes(c -> {
 							var l = ChatConfig.get().scheduled;
 							if (l.isEmpty()) msg(net.primlixe.aurorachat.ui.I18n.t("Отложенных сообщений нет"));
@@ -197,7 +208,7 @@ public final class AuroraChatMod implements ClientModInitializer {
 							msg(r == null ? net.primlixe.aurorachat.ui.I18n.t("§cПример: §f/achat later 10m текст §cили §f/achat later 20:30 текст") : net.primlixe.aurorachat.ui.I18n.t("⏱ Отправлю ") + r);
 							return 1;
 						})))
-				.then(ClientCommands.literal("nick")
+				.then(ClientCommands.literal("nick").requires(s -> net.primlixe.aurorachat.premium.Premium.has())
 						.then(ClientCommands.argument("player", com.mojang.brigadier.arguments.StringArgumentType.word())
 								.suggests((c, b) -> {
 									var con = Minecraft.getInstance().getConnection();
@@ -223,7 +234,7 @@ public final class AuroraChatMod implements ClientModInitializer {
 					return 1;
 				}))
 				.then(ClientCommands.literal("punish").requires(s -> !net.primlixe.aurorachat.Edition.PUBLIC).executes(c -> { pending = new net.primlixe.aurorachat.gui.PunishLogScreen(null); return 1; }))
-				.then(ClientCommands.literal("tr")
+				.then(ClientCommands.literal("tr").requires(s -> net.primlixe.aurorachat.premium.Premium.has())
 						.executes(c -> {
 							ChatConfig t = ChatConfig.get();
 							msg(net.primlixe.aurorachat.ui.I18n.t("Переводчик: чужое → §f") + net.primlixe.aurorachat.chat.Translator.target() + net.primlixe.aurorachat.ui.I18n.t("§7, своё → §f") + t.translateOut + net.primlixe.aurorachat.ui.I18n.t("§7, автоперевод ") + (t.translateAuto ? net.primlixe.aurorachat.ui.I18n.t("§aвкл") : net.primlixe.aurorachat.ui.I18n.t("§cвыкл"))
@@ -240,7 +251,7 @@ public final class AuroraChatMod implements ClientModInitializer {
 									net.primlixe.aurorachat.chat.Translator.translateOutgoing(text, tr -> { if (tr != null) pending = new net.minecraft.client.gui.screens.ChatScreen(tr, false); });
 									return 1;
 								})))
-				.then(ClientCommands.literal("grad")
+				.then(ClientCommands.literal("grad").requires(s -> net.primlixe.aurorachat.premium.Premium.has())
 						.executes(c -> {
 							String cur = ChatConfig.get().writeGradient;
 							msg(cur.isBlank() ? net.primlixe.aurorachat.ui.I18n.t("Пишу без градиента. §7/achat grad <название>") : net.primlixe.aurorachat.ui.I18n.t("Пишу градиентом: §f") + cur + net.primlixe.aurorachat.ui.I18n.t(" §7(/achat grad off — выключить)"));
@@ -285,7 +296,7 @@ public final class AuroraChatMod implements ClientModInitializer {
 							msg(ok ? net.primlixe.aurorachat.ui.I18n.t("Убран: ") + n : net.primlixe.aurorachat.ui.I18n.t("§cНет такого в списке"));
 							return 1;
 						}))))
-				.then(ClientCommands.literal("pins").then(ClientCommands.literal("clear").executes(c -> { ChatConfig.get().pinned.clear(); ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Закреплённые очищены")); return 1; })))));
+				.then(ClientCommands.literal("pins").requires(s -> net.primlixe.aurorachat.premium.Premium.has()).then(ClientCommands.literal("clear").executes(c -> { ChatConfig.get().pinned.clear(); ChatConfig.save(); msg(net.primlixe.aurorachat.ui.I18n.t("Закреплённые очищены")); return 1; })))));
 	}
 
 	private static int staffAdd(String nick, String role) {

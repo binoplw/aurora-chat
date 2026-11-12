@@ -125,7 +125,7 @@ public abstract class ChatComponentMixin {
 		long t0 = net.primlixe.aurorachat.ui.Perf.HUD.start();
 		try {
 			ChatHud.render(g, font, mode.foreground ? ChatHud.Mode.OPEN : ChatHud.Mode.HUD, mx, my);
-			net.primlixe.aurorachat.chat.ExtraWindows.render(g, font, mode.foreground, mx, my);
+			if (net.primlixe.aurorachat.premium.Premium.has()) net.primlixe.aurorachat.chat.ExtraWindows.render(g, font, mode.foreground, mx, my);
 		} catch (Throwable t) {
 			AuroraChatMod.LOG.error("Aurora Chat: ошибка отрисовки, временно включаю ванильный чат", t);
 			ChatHud.disableAfterError();

@@ -6,12 +6,13 @@ base {
 	archivesName = 'aurora-chat'
 }
 
-// Переходник между версиями: 26.1–26.1.2 — src/v261, 26.2+ — src/v262
+// Переходник между версиями: 26.1–26.1.2 — src/v261, 26.2 — src/v262, 26.3+ — src/v263
 def mcv = project.minecraft_version.tokenize('.').collect { it as int }
 // «~26.2» = 26.2.x — версия игры для fabric.mod.json; в имени файла — тоже
 project.ext.mcdep = '~' + mcv[0] + '.' + mcv[1]
 version = project.version + '+mc' + project.minecraft_version
-def compatDir = (mcv[0] > 26 || (mcv[0] == 26 && mcv.size() > 1 && mcv[1] >= 2)) ? 'src/v262/java' : 'src/v261/java'
+def mcMinor = mcv[0] > 26 ? 99 : (mcv.size() > 1 ? mcv[1] : 0)
+def compatDir = mcMinor >= 3 ? 'src/v263/java' : mcMinor == 2 ? 'src/v262/java' : 'src/v261/java'
 // Редакция: личная (все функции) или публичная для Modrinth (-Pedition=public: без функций под Mineblaze)
 def publicEdition = true // GitHub-версия всегда публичная
 def editionDir = layout.buildDirectory.dir('generated/edition').get().asFile

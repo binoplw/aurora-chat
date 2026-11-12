@@ -1,5 +1,7 @@
 package net.primlixe.aurorachat.gui;
 
+import net.primlixe.aurorachat.compat.Mc;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -54,6 +56,11 @@ public class ChatSettingsScreen extends Screen {
 	}
 
 	private static Section last = Section.FEATURES;
+	/** Разделы Aurora Chat+: без ключа вместо настроек — описание и кнопка магазина. */
+	private static final java.util.EnumSet<Section> PAID = java.util.EnumSet.of(Section.BACKGROUND, Section.COLORS, Section.INPUT, Section.AUTO,
+			Section.WHEEL, Section.WINDOWS, Section.AUTOJOIN, Section.HISTORY, Section.FILTER, Section.TABS);
+
+	private static boolean locked(Section s) { return PAID.contains(s) && !net.primlixe.aurorachat.premium.Premium.has(); }
 	/** Публичная сборка (Modrinth): без разделов под Mineblaze. */
 	private static final boolean PUB = net.primlixe.aurorachat.Edition.PUBLIC;
 
@@ -137,7 +144,8 @@ public class ChatSettingsScreen extends Screen {
 		fixed.add(addRenderableWidget(new Pill(width - 30, 7, 22, 16, "✕", Style.GHOST, p -> onClose()).tip("Закрыть (Esc)")));
 
 		cursorY = conY0;
-		switch (section) {
+		if (locked(section)) initLocked(section);
+		else switch (section) {
 			case FEATURES -> initFeatures();
 			case THEMES -> initThemes();
 			case AUTO -> initAuto();
@@ -198,6 +206,27 @@ public class ChatSettingsScreen extends Screen {
 
 	private void toggle(String label, BooleanSupplier get, Consumer<Boolean> set, String tip) {
 		add(new Toggle(0, 0, w(), label, get, set, tip), rowStep());
+	}
+
+	/** Переключатель платной функции: без ключа — строка со звездой, клик открывает магазин. */
+	private void ptoggle(String label, BooleanSupplier get, Consumer<Boolean> set, String tip) {
+		if (net.primlixe.aurorachat.premium.Premium.has()) toggle(label, get, set, tip);
+		else lockRow(label);
+	}
+
+	private void lockRow(String label) { add(new LockedRow(w(), label), rowStep()); }
+
+	private void openShop() { net.primlixe.aurorachat.compat.Mc.setScreen(new net.primlixe.aurorachat.premium.PremiumScreen(this)); }
+
+	/** Раздел Aurora Chat+ без ключа. */
+	private void initLocked(Section s) {
+		header(s.ru, "★ Aurora Chat+");
+		note("Этот раздел — часть Aurora Chat+. Бесплатно остаются окно чата, 3 темы, каналы G / L и вкладки «Все», G, L.");
+		gap();
+		button("★ Открыть все функции — Aurora Chat+", Style.PRIMARY, p -> openShop(), "Что входит, цена и ввод ключа");
+		gap();
+		header("Что входит в Aurora Chat+", null);
+		for (String f : net.primlixe.aurorachat.premium.PremiumScreen.features()) note("✦ " + f);
 	}
 
 	private Slider slider(String label, float min, float max, float cur, Consumer<Float> set, java.util.function.Function<Float, String> fmt) {
@@ -284,6 +313,10 @@ public class ChatSettingsScreen extends Screen {
 	/** Всё, что можно включить и выключить, — в одном месте. */
 	private void initFeatures() {
 		ChatConfig c = cfg();
+		if (!net.primlixe.aurorachat.premium.Premium.has()) {
+			button("★ Aurora Chat+ — открыть все функции", Style.PRIMARY, p -> openShop(), "Переводчик, 30+ тем, история, поиск, доп. окна и многое другое");
+			gap();
+		} else if (net.primlixe.aurorachat.Edition.PUBLIC) note("✔ Aurora Chat+ активирован: " + net.primlixe.aurorachat.premium.Premium.status());
 		note("Здесь собраны все функции мода — любую можно выключить. Подробные настройки каждой — в своём разделе слева.");
 		header("Главное", null);
 		toggle("Aurora Chat включён", () -> c.enabled, v -> c.enabled = v, "Выключи — и чат станет полностью ванильным");
@@ -293,8 +326,8 @@ public class ChatSettingsScreen extends Screen {
 		toggle("Плавная отправка", () -> c.sendAnim, v -> c.sendAnim = v, null);
 		toggle("Экономить при низком FPS", () -> c.perfAuto, v -> c.perfAuto = v, null);
 		if (!PUB) toggle("Модерация по правилам", () -> c.modEnabled, v -> c.modEnabled = v, null);
-		toggle("Круговое меню действий с игроком", () -> c.playerWheel, v -> c.playerWheel = v, null);
-		toggle("Быстрые фразы над строкой ввода", () -> c.quickPhrases, v -> c.quickPhrases = v, null);
+		ptoggle("Круговое меню действий с игроком", () -> c.playerWheel, v -> c.playerWheel = v, null);
+		ptoggle("Быстрые фразы над строкой ввода", () -> c.quickPhrases, v -> c.quickPhrases = v, null);
 		gap();
 		var compat = net.primlixe.aurorachat.compat.Compat.report();
 		if (!compat.isEmpty()) {
@@ -325,12 +358,12 @@ public class ChatSettingsScreen extends Screen {
 		toggle("Цветные ники", () -> c.colorNames, v -> c.colorNames = v, null);
 		toggle("Склейка повторов ×N", () -> c.stacking, v -> c.stacking = v, null);
 		toggle("Кликабельные ссылки", () -> c.clickableLinks, v -> c.clickableLinks = v, null);
-		toggle("Предпросмотр ссылок", () -> c.linkPreview, v -> c.linkPreview = v, null);
-		toggle("Переводчик (ПКМ → «Перевести»)", () -> c.translate, v -> c.translate = v, null);
+		ptoggle("Предпросмотр ссылок", () -> c.linkPreview, v -> c.linkPreview = v, null);
+		ptoggle("Переводчик (ПКМ → «Перевести»)", () -> c.translate, v -> c.translate = v, null);
 		toggle("Компактные входы/выходы", () -> c.compactJoins, v -> c.compactJoins = v, null);
 		toggle("Кнопка «↩ ответить»", () -> c.replyButton, v -> c.replyButton = v, null);
-		toggle("Закреплённые сообщения", () -> c.pins, v -> c.pins = v, null);
-		toggle("Свои имена для ников", () -> c.nicknamesEnabled, v -> c.nicknamesEnabled = v, null);
+		ptoggle("Закреплённые сообщения", () -> c.pins, v -> c.pins = v, null);
+		ptoggle("Свои имена для ников", () -> c.nicknamesEnabled, v -> c.nicknamesEnabled = v, null);
 		toggle("Упоминания", () -> c.mentions, v -> c.mentions = v, null);
 		toggle("Карточки ЛС и упоминаний", () -> c.toasts, v -> c.toasts = v, null);
 		toggle("Разделитель при входе на сервер", () -> c.sessionSeparator, v -> c.sessionSeparator = v, null);
@@ -338,34 +371,34 @@ public class ChatSettingsScreen extends Screen {
 		header("Строка ввода", null);
 		toggle("Плашка G / L в строке ввода", () -> c.inputChannelChip, v -> c.inputChannelChip = v, null);
 		toggle("Стильная строка ввода", () -> c.styledInput, v -> c.styledInput = v, null);
-		toggle("Поиск по чату", () -> c.searchBar, v -> c.searchBar = v, null);
-		toggle("Кнопка истории ☰", () -> c.historyButton, v -> c.historyButton = v, null);
-		toggle("Панель эмодзи ☺", () -> c.emojiPicker, v -> c.emojiPicker = v, null);
-		toggle("Эмодзи :коды:", () -> c.emojiShortcodes, v -> c.emojiShortcodes = v, null);
-		toggle("Кнопка «отправить позже» ⏱", () -> c.laterButton, v -> c.laterButton = v, null);
-		toggle("Кнопка перевода ⇄", () -> c.translateButton, v -> c.translateButton = v, null);
-		toggle("Палитра цветов «&»", () -> c.colorPicker, v -> c.colorPicker = v, null);
-		toggle("Ники по Tab", () -> c.nickComplete, v -> c.nickComplete = v, null);
+		ptoggle("Поиск по чату", () -> c.searchBar, v -> c.searchBar = v, null);
+		ptoggle("Кнопка истории ☰", () -> c.historyButton, v -> c.historyButton = v, null);
+		ptoggle("Панель эмодзи ☺", () -> c.emojiPicker, v -> c.emojiPicker = v, null);
+		ptoggle("Эмодзи :коды:", () -> c.emojiShortcodes, v -> c.emojiShortcodes = v, null);
+		ptoggle("Кнопка «отправить позже» ⏱", () -> c.laterButton, v -> c.laterButton = v, null);
+		ptoggle("Кнопка перевода ⇄", () -> c.translateButton, v -> c.translateButton = v, null);
+		ptoggle("Палитра цветов «&»", () -> c.colorPicker, v -> c.colorPicker = v, null);
+		ptoggle("Ники по Tab", () -> c.nickComplete, v -> c.nickComplete = v, null);
 		toggle("Счётчик символов", () -> c.charCounter, v -> c.charCounter = v, null);
 		toggle("Предпросмотр цветов", () -> c.colorPreview, v -> c.colorPreview = v, null);
 		toggle("Меню по ПКМ", () -> c.copyMenu, v -> c.copyMenu = v, null);
-		toggle("Черновики", () -> c.drafts, v -> c.drafts = v, null);
-		toggle("Шаблоны {xyz} {ник}…", () -> c.templates, v -> c.templates = v, null);
-		toggle("Своя история ↑ / ↓", () -> c.betterHistory, v -> c.betterHistory = v, null);
+		ptoggle("Черновики", () -> c.drafts, v -> c.drafts = v, null);
+		ptoggle("Шаблоны {xyz} {ник}…", () -> c.templates, v -> c.templates = v, null);
+		ptoggle("Своя история ↑ / ↓", () -> c.betterHistory, v -> c.betterHistory = v, null);
 		gap();
 		header("Цвета", null);
 		toggle("Каналы G / L", () -> c.channels, v -> c.channels = v, null);
-		toggle("Автоцвет сообщений", () -> c.autoColor, v -> c.autoColor = v, null);
-		toggle("HEX-цвета и градиенты", () -> c.hexColors, v -> c.hexColors = v, null);
+		ptoggle("Автоцвет сообщений", () -> c.autoColor, v -> c.autoColor = v, null);
+		ptoggle("HEX-цвета и градиенты", () -> c.hexColors, v -> c.hexColors = v, null);
 		gap();
 		header("Автоматика", null);
-		toggle("Автоприветствия", () -> c.autoGreet, v -> c.autoGreet = v, null);
-		toggle("АФК-автоответчик", () -> c.afk, v -> c.afk = v, null);
-		toggle("Сводка «пока тебя не было»", () -> c.afkSummary, v -> c.afkSummary = v, null);
-		toggle("Антиспам", () -> c.antiSpam, v -> c.antiSpam = v, null);
-		toggle("Напоминания", () -> c.remindersEnabled, v -> c.remindersEnabled = v, null);
-		toggle("Отложенные сообщения", () -> c.laterSend, v -> c.laterSend = v, null);
-		toggle("Автовход на сервер", () -> c.autoJoin, v -> c.autoJoin = v, null);
+		ptoggle("Автоприветствия", () -> c.autoGreet, v -> c.autoGreet = v, null);
+		ptoggle("АФК-автоответчик", () -> c.afk, v -> c.afk = v, null);
+		ptoggle("Сводка «пока тебя не было»", () -> c.afkSummary, v -> c.afkSummary = v, null);
+		ptoggle("Антиспам", () -> c.antiSpam, v -> c.antiSpam = v, null);
+		ptoggle("Напоминания", () -> c.remindersEnabled, v -> c.remindersEnabled = v, null);
+		ptoggle("Отложенные сообщения", () -> c.laterSend, v -> c.laterSend = v, null);
+		ptoggle("Автовход на сервер", () -> c.autoJoin, v -> c.autoJoin = v, null);
 		if (!PUB) toggle("Слежка за персоналом", () -> c.staffWatch, v -> c.staffWatch = v, null);
 		gap();
 		header("Звуки", null);
@@ -375,14 +408,24 @@ public class ChatSettingsScreen extends Screen {
 		if (!PUB) toggle("Звук персонала", () -> c.staffSound, v -> c.staffSound = v, null);
 		gap();
 		header("Журналы", null);
-		toggle("Помнить чат после перезапуска", () -> c.persistHistory, v -> c.persistHistory = v, null);
-		toggle("Помнить историю ввода", () -> c.persistInput, v -> c.persistInput = v, null);
-		toggle("Журнал в файлы", () -> c.logging, v -> c.logging = v, null);
-		toggle("Консоль (Ё)", () -> c.consoleLog, v -> c.consoleLog = v, "Запись событий для экрана консоли");
+		ptoggle("Помнить чат после перезапуска", () -> c.persistHistory, v -> c.persistHistory = v, null);
+		ptoggle("Помнить историю ввода", () -> c.persistInput, v -> c.persistInput = v, null);
+		ptoggle("Журнал в файлы", () -> c.logging, v -> c.logging = v, null);
+		ptoggle("Консоль (Ё)", () -> c.consoleLog, v -> c.consoleLog = v, "Запись событий для экрана консоли");
 	}
 
 	private void initThemes() {
 		ChatConfig c = cfg();
+		if (!net.primlixe.aurorachat.premium.Premium.has()) {
+			header("Готовые темы", "бесплатно — Деловой, Discord и Aurora, остальные — в Aurora Chat+");
+			for (ChatThemes.Theme t : ChatThemes.ALL) if (net.primlixe.aurorachat.premium.Premium.themeFree(t.name())) add(new ThemeCard(w(), t), 28);
+			for (ChatThemes.Theme t : ChatThemes.ALL) if (!net.primlixe.aurorachat.premium.Premium.themeFree(t.name())) add(new ThemeCard(w(), t), 28);
+			gap();
+			header("Свои темы и тонкая настройка", "★ Aurora Chat+");
+			lockRow("Свои темы и обмен кодом с друзьями");
+			lockRow("Цвета, прозрачность, скругление, раскладка");
+			return;
+		}
 		// ---- свои темы: сохранить, поделиться кодом, вставить чужую
 		header("Мои темы", "сохрани текущий вид, отправь код другу — он вставит его у себя");
 		Field tname = field("Название новой темы", "", "например: Моя ночная", s -> {});
@@ -451,7 +494,7 @@ public class ChatSettingsScreen extends Screen {
 		String[] names = Arrays.stream(net.primlixe.aurorachat.chat.AutoColor.PRESETS).map(p -> p[1]).toArray(String[]::new);
 		String[][] pr = net.primlixe.aurorachat.chat.AutoColor.PRESETS;
 		header("Автоцвет", "код цвета сам добавляется к твоим сообщениям");
-		toggle("Автоцвет сообщений", () -> c.autoColor, v -> c.autoColor = v, "Работает, если сервер разрешает цветной чат (&-коды)");
+		ptoggle("Автоцвет сообщений", () -> c.autoColor, v -> c.autoColor = v, "Работает, если сервер разрешает цветной чат (&-коды)");
 		note("Первые 16 квадратиков — обычные цвета Minecraft (работают на любом сервере). Остальные цвета и спектр — HEX (&#RRGGBB): нужен сервер с HEX-цветами.");
 		codeColor("Личные (/m /msg /w /r)", () -> c.colorDm, v -> c.colorDm = v);
 		codeColor("Глобальный чат (G)", () -> c.colorGlobal, v -> c.colorGlobal = v);
@@ -472,12 +515,12 @@ public class ChatSettingsScreen extends Screen {
 		gap();
 		}
 		header("Автоприветствия", "пишут «пр Ник», «ку Ник», «qq Ник» — отвечаю сам");
-		toggle("Отвечать на приветствия", () -> c.autoGreet, v -> c.autoGreet = v, "Ответ уходит через 1–2,5 с, не чаще паузы на игрока");
+		ptoggle("Отвечать на приветствия", () -> c.autoGreet, v -> c.autoGreet = v, "Ответ уходит через 1–2,5 с, не чаще паузы на игрока");
 		String[] chs = {"Глобальный (G)", "Локальный (L)", "Текущий канал"};
 		String[] chv = {"G", "L", "CURRENT"};
 		choice("Куда отвечать", chs, () -> Math.max(0, Arrays.asList(chv).indexOf(c.greetChannel)), i -> c.greetChannel = chv[i], null);
-		toggle("Отвечать тем же словом", () -> c.greetMirror, v -> c.greetMirror = v, "«qq Ник» → «qq Steve». Выкл — случайный ответ из списка ниже");
-		toggle("Отвечать на «всем привет»", () -> c.greetAll, v -> c.greetAll = v, "Даже если твой ник не написали");
+		ptoggle("Отвечать тем же словом", () -> c.greetMirror, v -> c.greetMirror = v, "«qq Ник» → «qq Steve». Выкл — случайный ответ из списка ниже");
+		ptoggle("Отвечать на «всем привет»", () -> c.greetAll, v -> c.greetAll = v, "Даже если твой ник не написали");
 		field("Ответ в клан: как писать в клановый чат", c.greetClan, "пусто — в клане не отвечать · /c или /clan chat {text}", s -> c.greetClan = s.trim());
 		slider("Пауза на игрока", 5, 600, c.greetCooldown, v -> c.greetCooldown = Math.round(v), v -> Math.round(v) + " с");
 		field("Слова-приветствия", String.join(", ", c.greetWords), "пр, ку, qq, q, привет…", s -> c.greetWords = split(s.toLowerCase(Locale.ROOT)));
@@ -488,23 +531,23 @@ public class ChatSettingsScreen extends Screen {
 		});
 		gap();
 		header("АФК-автоответчик", "/achat afk — включить вручную");
-		toggle("Автоответчик", () -> c.afk, v -> c.afk = v, "Отвечает на личные, пока ты неактивен");
+		ptoggle("Автоответчик", () -> c.afk, v -> c.afk = v, "Отвечает на личные, пока ты неактивен");
 		slider("АФК после бездействия", 0, 60, c.afkMinutes, v -> c.afkMinutes = Math.round(v), v -> Math.round(v) == 0 ? "только вручную" : Math.round(v) + " мин");
 		field("Текст ответа", c.afkMessage, "Я сейчас АФК, отвечу позже :)", s -> c.afkMessage = s);
 		field("Команда ответа ({name}, {text})", c.afkCommand, "/msg {name} {text}", s -> c.afkCommand = s.isBlank() ? "/msg {name} {text}" : s);
-		toggle("Сводка «пока тебя не было»", () -> c.afkSummary, v -> c.afkSummary = v,
+		ptoggle("Сводка «пока тебя не было»", () -> c.afkSummary, v -> c.afkSummary = v,
 				"Вернулся после простоя — в чате карточка: кто писал в ЛС, кто упоминал, нарушения, кто из персонала заходил. Работает и без автоответчика");
 		slider("Не чаще одному игроку", 10, 1800, c.afkCooldown, v -> c.afkCooldown = Math.round(v / 10f) * 10, v -> Math.round(v / 60f) + " мин");
 		gap();
 		header("Антиспам", "повторы и флуд от одного игрока");
-		toggle("Антиспам", () -> c.antiSpam, v -> c.antiSpam = v, "Подряд одинаковые и так склеиваются в ×N");
+		ptoggle("Антиспам", () -> c.antiSpam, v -> c.antiSpam = v, "Подряд одинаковые и так склеиваются в ×N");
 		slider("Повтор скрывать в течение", 0, 300, c.spamRepeatSeconds, v -> c.spamRepeatSeconds = Math.round(v), v -> Math.round(v) == 0 ? "выкл" : Math.round(v) + " с");
 		slider("Флуд: больше сообщений", 2, 20, c.floodLimit, v -> c.floodLimit = Math.round(v), v -> Math.round(v) + "");
 		slider("…за время", 2, 60, c.floodSeconds, v -> c.floodSeconds = Math.round(v), v -> Math.round(v) + " с");
-		toggle("Гасить КАПС", () -> c.antiCaps, v -> c.antiCaps = v, "Сообщения ЦЕЛИКОМ ЗАГЛАВНЫМИ показываются строчными");
+		ptoggle("Гасить КАПС", () -> c.antiCaps, v -> c.antiCaps = v, "Сообщения ЦЕЛИКОМ ЗАГЛАВНЫМИ показываются строчными");
 		gap();
 		header("Напоминания", "/achat remind 10m текст · /achat remind 20:30 текст · /achat timer 5m");
-		toggle("Напоминания", () -> c.remindersEnabled, v -> c.remindersEnabled = v, null);
+		ptoggle("Напоминания", () -> c.remindersEnabled, v -> c.remindersEnabled = v, null);
 		toggle("Звук напоминания", () -> c.reminderSound, v -> c.reminderSound = v, null);
 		Field rf = field("Новое напоминание", "", "10m сходить на ивент  ·  20:30 рейд", s -> {});
 		button("Добавить напоминание", Style.PRIMARY, p -> {
@@ -519,7 +562,7 @@ public class ChatSettingsScreen extends Screen {
 		}
 		gap();
 		header("Отложенные сообщения", "кнопка ⏱ в чате · /achat later 10m текст");
-		toggle("Отложенные сообщения", () -> c.laterSend, v -> c.laterSend = v, "Выкл — очередь не отправляется и кнопка ⏱ скрыта");
+		ptoggle("Отложенные сообщения", () -> c.laterSend, v -> c.laterSend = v, "Выкл — очередь не отправляется и кнопка ⏱ скрыта");
 		Field lf = field("Новое отложенное", "", "10m всем удачи на ивенте  ·  20:30 /m Steve го", s -> {});
 		button("Запланировать", Style.PRIMARY, p -> {
 			String r = net.primlixe.aurorachat.chat.LaterSend.add(lf.getValue());
@@ -709,7 +752,7 @@ public class ChatSettingsScreen extends Screen {
 		ChatConfig c = cfg();
 		var list = net.primlixe.aurorachat.chat.AutoJoin.entries();
 		header("Автовход на сервер", "команды по очереди при заходе");
-		toggle("Автовход включён", () -> c.autoJoin, v -> c.autoJoin = v, "Главный выключатель для всех серверов ниже");
+		ptoggle("Автовход включён", () -> c.autoJoin, v -> c.autoJoin = v, "Главный выключатель для всех серверов ниже");
 		note("Пароли хранятся только на этом ПК: config/aurorachat/autojoin.json · в консоли и истории ввода скрыты.");
 		for (int i = 0; i < list.size(); i++) {
 			var e = list.get(i);
@@ -897,7 +940,7 @@ public class ChatSettingsScreen extends Screen {
 		}
 		button("Открыть папку с картинками", Style.SECONDARY, p -> {
 			try { java.nio.file.Files.createDirectories(net.primlixe.aurorachat.ui.BgImage.dir()); } catch (Exception ignored) { }
-			net.minecraft.util.Util.getPlatform().openPath(net.primlixe.aurorachat.ui.BgImage.dir());
+			Mc.openPath(net.primlixe.aurorachat.ui.BgImage.dir());
 		}, "Положи туда картинку, потом выбери её выше (список обновится при возврате в раздел)");
 		gap();
 		header("Градиент фона", null);
@@ -1020,23 +1063,23 @@ public class ChatSettingsScreen extends Screen {
 		header("Строка ввода", null);
 		toggle("Стильная строка ввода", () -> c.styledInput, v -> c.styledInput = v, "Строка ввода в цветах чата");
 		toggle("Плашка G / L слева", () -> c.inputChannelChip, v -> c.inputChannelChip = v, "Канал всё равно переключается: Alt+G / Alt+L и в шапке чата");
-		toggle("Поиск по чату", () -> c.searchBar, v -> c.searchBar = v, "Выбирается только мышью — стрелки ↑/↓ листают историю");
-		toggle("Кнопка истории ☰", () -> c.historyButton, v -> c.historyButton = v, null);
-		toggle("Панель эмодзи ☺", () -> c.emojiPicker, v -> c.emojiPicker = v, null);
-		toggle("Эмодзи :коды:", () -> c.emojiShortcodes, v -> c.emojiShortcodes = v, ":heart: → ❤ при отправке");
-		toggle("Кнопка «отправить позже» ⏱", () -> c.laterButton, v -> c.laterButton = v, null);
-		toggle("Палитра цветов «&»", () -> c.colorPicker, v -> c.colorPicker = v, "Клик по цвету, стилю или градиенту вставляет код в строку");
-		toggle("Ники по Tab", () -> c.nickComplete, v -> c.nickComplete = v, "Ste + Tab → Steve; ещё Tab — следующий ник, Shift+Tab — назад");
-		toggle("Серая подсказка ника", () -> c.nickGhost, v -> c.nickGhost = v, "Пока пишешь ник, справа виден его конец");
+		ptoggle("Поиск по чату", () -> c.searchBar, v -> c.searchBar = v, "Выбирается только мышью — стрелки ↑/↓ листают историю");
+		ptoggle("Кнопка истории ☰", () -> c.historyButton, v -> c.historyButton = v, null);
+		ptoggle("Панель эмодзи ☺", () -> c.emojiPicker, v -> c.emojiPicker = v, null);
+		ptoggle("Эмодзи :коды:", () -> c.emojiShortcodes, v -> c.emojiShortcodes = v, ":heart: → ❤ при отправке");
+		ptoggle("Кнопка «отправить позже» ⏱", () -> c.laterButton, v -> c.laterButton = v, null);
+		ptoggle("Палитра цветов «&»", () -> c.colorPicker, v -> c.colorPicker = v, "Клик по цвету, стилю или градиенту вставляет код в строку");
+		ptoggle("Ники по Tab", () -> c.nickComplete, v -> c.nickComplete = v, "Ste + Tab → Steve; ещё Tab — следующий ник, Shift+Tab — назад");
+		ptoggle("Серая подсказка ника", () -> c.nickGhost, v -> c.nickGhost = v, "Пока пишешь ник, справа виден его конец");
 		toggle("Счётчик символов", () -> c.charCounter, v -> c.charCounter = v, "Считает уже с цветами и градиентами — сколько уйдёт серверу");
 		toggle("Предпросмотр цветов", () -> c.colorPreview, v -> c.colorPreview = v, "Над строкой ввода видно, как будет выглядеть сообщение с &-кодами");
 		toggle("Меню по ПКМ", () -> c.copyMenu, v -> c.copyMenu = v, "Копировать, ответить, упомянуть, найти в истории");
-		toggle("Черновики", () -> c.drafts, v -> c.drafts = v, "Недописанное сохраняется, даже после перезапуска");
-		toggle("Шаблоны {xyz} {ник} {время}…", () -> c.templates, v -> c.templates = v,
+		ptoggle("Черновики", () -> c.drafts, v -> c.drafts = v, "Недописанное сохраняется, даже после перезапуска");
+		ptoggle("Шаблоны {xyz} {ник} {время}…", () -> c.templates, v -> c.templates = v,
 				"{xyz} координаты · {x} {y} {z} · {ник} · {время} · {дата} · {сервер} · {мир} · {hp} · {пинг} · {fps}");
 		gap();
 		header("Быстрые фразы ⚡", "над строкой ввода: клик — отправить сразу, можно жать подряд");
-		toggle("Панель быстрых фраз", () -> c.quickPhrases, v -> c.quickPhrases = v,
+		ptoggle("Панель быстрых фраз", () -> c.quickPhrases, v -> c.quickPhrases = v,
 				"ЛКМ — отправить · Shift+ЛКМ — вставить в строку · ПКМ — удалить · Alt+1…9 — отправить №");
 		for (int i = 0; i < c.quickList.size(); i++) {
 			int idx = i;
@@ -1052,11 +1095,11 @@ public class ChatSettingsScreen extends Screen {
 		}, "Или прямо в чате: напиши текст и нажми «＋» на панели");
 		gap();
 		header("История ↑ / ↓", null);
-		toggle("Своя история ввода", () -> c.betterHistory, v -> c.betterHistory = v, "Без повторов, больше строк. Выкл — как в обычной игре");
+		ptoggle("Своя история ввода", () -> c.betterHistory, v -> c.betterHistory = v, "Без повторов, больше строк. Выкл — как в обычной игре");
 		toggle("Поиск по началу", () -> c.historyPrefix, v -> c.historyPrefix = v, "Набери «/tp» и жми ↑ — листаются только команды на /tp");
-		toggle("↑ + Enter — отправить и не закрывать", () -> c.historyRepeat, v -> c.historyRepeat = v,
+		ptoggle("↑ + Enter — отправить и не закрывать", () -> c.historyRepeat, v -> c.historyRepeat = v,
 				"Строка из истории отправляется, а чат остаётся открытым с тем же текстом — жми Enter ещё. Ctrl+Enter — так же для любого текста");
-		toggle("Помнить после перезапуска", () -> c.persistInput, v -> { c.persistInput = v; if (v) net.primlixe.aurorachat.chat.InputHistory.save(); }, "Пароли (/login, /reg…) в файл не попадают");
+		ptoggle("Помнить после перезапуска", () -> c.persistInput, v -> { c.persistInput = v; if (v) net.primlixe.aurorachat.chat.InputHistory.save(); }, "Пароли (/login, /reg…) в файл не попадают");
 		slider("Хранить строк", 50, 5000, c.inputHistorySize, v -> c.inputHistorySize = Math.round(v / 50f) * 50, v -> Math.round(v / 50f) * 50 + "");
 		int n = net.primlixe.aurorachat.chat.InputHistory.list().size();
 		button("Очистить историю ввода (" + n + ")", Style.DANGER, p -> {
@@ -1068,7 +1111,7 @@ public class ChatSettingsScreen extends Screen {
 	private void initColors() {
 		ChatConfig c = cfg();
 		header("HEX-цвета и градиенты", null);
-		toggle("Понимать HEX и градиенты", () -> c.hexColors, v -> c.hexColors = v, "Сервер должен поддерживать HEX-цвета (EssentialsX, CMI, ChatControl и др.)");
+		ptoggle("Понимать HEX и градиенты", () -> c.hexColors, v -> c.hexColors = v, "Сервер должен поддерживать HEX-цвета (EssentialsX, CMI, ChatControl и др.)");
 		ChatConfig.HexFormat[] fm = ChatConfig.HexFormat.values();
 		choice("Формат для сервера", Arrays.stream(fm).map(x -> x.ru).toArray(String[]::new), () -> c.hexFormat.ordinal(), i -> c.hexFormat = fm[i],
 				"&#RRGGBB — EssentialsX, CMI и большинство · &x&R&R… — Spigot/Bungee · <#RRGGBB> — MiniMessage");
@@ -1083,7 +1126,7 @@ public class ChatSettingsScreen extends Screen {
 			return 0;
 		}, i -> c.writeGradient = i == 0 ? "" : c.gradients.get(i - 1).name,
 				"Быстро: ПКМ по градиенту в палитре «&» у строки ввода или /achat grad <название>");
-		toggle("И в личных сообщениях", () -> c.writeGradientDm, v -> c.writeGradientDm = v, "/m Ник текст → текст градиентом");
+		ptoggle("И в личных сообщениях", () -> c.writeGradientDm, v -> c.writeGradientDm = v, "/m Ник текст → текст градиентом");
 		add(new PreviewLine(w(), () -> {
 			String gc = net.primlixe.aurorachat.chat.AutoColor.writeGradient();
 			return gc == null ? "Выбери градиент — тут будет пример" : gc + "Так будут выглядеть твои сообщения";
@@ -1185,27 +1228,27 @@ public class ChatSettingsScreen extends Screen {
 		header("Сообщения", null);
 		toggle("Склейка повторов ×N", () -> c.stacking, v -> c.stacking = v, null);
 		toggle("Кликабельные ссылки", () -> c.clickableLinks, v -> c.clickableLinks = v, null);
-		toggle("Предпросмотр ссылок", () -> c.linkPreview, v -> c.linkPreview = v,
+		ptoggle("Предпросмотр ссылок", () -> c.linkPreview, v -> c.linkPreview = v,
 				"Наведи на ссылку — домен, полный адрес и предупреждение, если похоже на обман (сокращатель, голый IP, «steam» в чужом домене, .exe)");
 		toggle("Компактные входы/выходы", () -> c.compactJoins, v -> c.compactJoins = v, null);
 		toggle("Скрыть входы/выходы", () -> c.hideJoins, v -> c.hideJoins = v, null);
 		gap();
 		header("Удобство", null);
 		toggle("Кнопка «↩ ответить» у сообщения", () -> c.replyButton, v -> c.replyButton = v, "Появляется при наведении: ЛС — /m Ник, обычное — «Ник, »");
-		toggle("Закреплённые сообщения", () -> c.pins, v -> c.pins = v, "ПКМ по сообщению → «Закрепить»; полоска сверху окна");
+		ptoggle("Закреплённые сообщения", () -> c.pins, v -> c.pins = v, "ПКМ по сообщению → «Закрепить»; полоска сверху окна");
 		gap();
 		header("Переводчик", "Google Translate · текст уходит в сеть только при переводе");
-		toggle("Переводчик в меню сообщения", () -> c.translate, v -> c.translate = v, "ПКМ по сообщению → «⇄ Перевести»: перевод появится второй строкой, ПКМ → «Показать оригинал» уберёт его");
+		ptoggle("Переводчик в меню сообщения", () -> c.translate, v -> c.translate = v, "ПКМ по сообщению → «⇄ Перевести»: перевод появится второй строкой, ПКМ → «Показать оригинал» уберёт его");
 		choice("Переводить на", TR_TO_LANGS, () -> Math.max(0, Arrays.asList(TR_TO_CODES).indexOf(c.translateTo)), i -> c.translateTo = TR_TO_CODES[i], "«Как в игре» — на язык, выбранный в настройках Minecraft");
-		toggle("Автоперевод чужого языка", () -> c.translateAuto, v -> c.translateAuto = v,
+		ptoggle("Автоперевод чужого языка", () -> c.translateAuto, v -> c.translateAuto = v,
 				"Сообщения игроков на другой письменности переводятся сами (не больше 20 в минуту). Каждое такое сообщение отправляется в Google");
 		choice("Свой текст переводить на", TR_LANGS, () -> Math.max(0, Arrays.asList(TR_CODES).indexOf(c.translateOut)), i -> c.translateOut = TR_CODES[i],
 				"/achat tr текст — перевод попадёт в строку ввода, проверь и нажми Enter");
-		toggle("Кнопка ⇄ у строки ввода", () -> c.translateButton, v -> c.translateButton = v,
+		ptoggle("Кнопка ⇄ у строки ввода", () -> c.translateButton, v -> c.translateButton = v,
 				"Переводит набранное прямо в строке (ЛС «/m ник» и «!» сохраняются); ПКМ по кнопке — другой язык");
 		gap();
 		header("Свои имена для ников", "видны только тебе · ПКМ по сообщению → «Переименовать»");
-		toggle("Показывать свои имена", () -> c.nicknamesEnabled, v -> c.nicknamesEnabled = v, "При наведении на имя виден настоящий ник");
+		ptoggle("Показывать свои имена", () -> c.nicknamesEnabled, v -> c.nicknamesEnabled = v, "При наведении на имя виден настоящий ник");
 		for (var en : new ArrayList<>(c.nicknames.entrySet())) {
 			button("✕ " + en.getKey() + " → " + en.getValue(), Style.SECONDARY, p -> { c.nicknames.remove(en.getKey()); ChatConfig.save(); rebuildWidgets(); }, "Убрать своё имя");
 		}
@@ -1223,12 +1266,12 @@ public class ChatSettingsScreen extends Screen {
 	private void initWheel() {
 		ChatConfig c = cfg();
 		header("Круговое меню", "навёлся на игрока + G (клавиша меняется в «Управлении»)");
-		toggle("Круговое меню действий", () -> c.playerWheel, v -> c.playerWheel = v, "Держи G и веди мышь к действию, или нажми G и кликни");
+		ptoggle("Круговое меню действий", () -> c.playerWheel, v -> c.playerWheel = v, "Держи G и веди мышь к действию, или нажми G и кликни");
 		slider("Затемнение экрана", 0f, 0.9f, c.wheelDim, v -> c.wheelDim = v, v -> Math.round(v * 100) + "%");
 		slider("Дальность наведения", 3, 64, c.wheelRange, v -> c.wheelRange = Math.round(v), v -> Math.round(v) + " бл.");
 		gap();
 		header("Спецэффекты", "когда применяешь действие");
-		toggle("Эффекты на экране", () -> c.wheelFx, v -> c.wheelFx = v, "Вспышка, волна, разлетающиеся значки и надпись «Обнять → Ник»");
+		ptoggle("Эффекты на экране", () -> c.wheelFx, v -> c.wheelFx = v, "Вспышка, волна, разлетающиеся значки и надпись «Обнять → Ник»");
 		toggle("Частицы у игрока", () -> c.wheelFxWorld, v -> c.wheelFxWorld = v, "Сердечки/искры/ноты над игроком в мире — видишь только ты");
 		toggle("Звук", () -> c.wheelFxSound, v -> c.wheelFxSound = v, "Короткий аккорд из трёх нот");
 		gap();
@@ -1273,7 +1316,7 @@ public class ChatSettingsScreen extends Screen {
 		toggle("Фильтр каналов во «Все» (клик по «Все»)", () -> c.allFollowsChannel, v -> c.allFollowsChannel = v, "Клик по «Все»: L → G → оба. Куда пишешь — не меняется");
 		gap();
 		header("Клан", "вместо вкладки «@»");
-		toggle("Вкладка «Клан» (выкл — вернуть «@»)", () -> c.clanTab, v -> { c.clanTab = v; rebuildWidgets(); }, null);
+		ptoggle("Вкладка «Клан» (выкл — вернуть «@»)", () -> c.clanTab, v -> { c.clanTab = v; rebuildWidgets(); }, null);
 		toggle("Убирать клан из остального чата", () -> c.clanHide, v -> c.clanHide = v, null);
 		field("Начало кланового сообщения", c.clanPrefix, "КЛАН:", s -> c.clanPrefix = s.isBlank() ? "КЛАН:" : s.trim());
 		gap();
@@ -1314,22 +1357,22 @@ public class ChatSettingsScreen extends Screen {
 		header("История чата", null);
 		slider("Хранить сообщений", 100, 16384, c.historySize, v -> c.historySize = Math.round(v / 100f) * 100, v -> Math.round(v / 100f) * 100 + "");
 		toggle("Не чистить при выходе с сервера", () -> c.keepOnDisconnect, v -> c.keepOnDisconnect = v, null);
-		toggle("Помнить после перезапуска", () -> c.persistHistory, v -> c.persistHistory = v, null);
+		ptoggle("Помнить после перезапуска", () -> c.persistHistory, v -> c.persistHistory = v, null);
 		slider("Сохранять последних", 0, 5000, c.persistLimit, v -> c.persistLimit = Math.round(v / 50f) * 50, v -> Math.round(v / 50f) * 50 + "");
 		toggle("Разделитель при входе на сервер", () -> c.sessionSeparator, v -> c.sessionSeparator = v, null);
 		gap();
 		header("Журнал", "config/aurorachat/chatlogs");
-		toggle("Писать журнал в файлы", () -> c.logging, v -> c.logging = v, null);
-		toggle("Системные сообщения в журнал", () -> c.logSystem, v -> c.logSystem = v, null);
+		ptoggle("Писать журнал в файлы", () -> c.logging, v -> c.logging = v, null);
+		ptoggle("Системные сообщения в журнал", () -> c.logSystem, v -> c.logSystem = v, null);
 		button("Открыть историю (H)", Style.PRIMARY, p -> net.primlixe.aurorachat.compat.Mc.setScreen(new ChatLogScreen(this, "")), null);
 		gap();
 		header("Консоль", "клавиша Ё · /achat console");
-		toggle("Записывать события", () -> c.consoleLog, v -> c.consoleLog = v, "Чат, команды, скрытое, входы, персонал");
+		ptoggle("Записывать события", () -> c.consoleLog, v -> c.consoleLog = v, "Чат, команды, скрытое, входы, персонал");
 		button("Открыть консоль", Style.SECONDARY, p -> net.primlixe.aurorachat.compat.Mc.setScreen(new ConsoleScreen(this)), null);
 		slider("Строк в консоли", 500, 20000, c.consoleLimit, v -> c.consoleLimit = Math.round(v / 500f) * 500, v -> Math.round(v / 500f) * 500 + "");
 		button("Папка журнала", Style.SECONDARY, p -> {
 			try { java.nio.file.Files.createDirectories(ChatLog.root()); } catch (Exception ignored) { }
-			net.minecraft.util.Util.getPlatform().openPath(ChatLog.root());
+			Mc.openPath(ChatLog.root());
 		}, null);
 	}
 
@@ -1669,13 +1712,51 @@ public class ChatSettingsScreen extends Screen {
 			g.fill(px + 4, py + 5, px + 26, py + 6, 0xC0FFFFFF);
 			g.fill(px + 4, py + 9, px + 32, py + 10, 0x90FFFFFF);
 			g.fill(px + 4, py + 13, px + 20, py + 14, UI.alpha(acc, 0.9f));
+			boolean lock = !net.primlixe.aurorachat.premium.Premium.has() && !net.primlixe.aurorachat.premium.Premium.themeFree(t.name());
 			UI.text(g, font, (sel ? "✔ " : "") + net.primlixe.aurorachat.ui.I18n.t(t.name()), x0 + 50, y0 + 4, sel ? UI.TEXT : UI.mix(UI.SUB, UI.TEXT, hover), false);
+			if (lock) {
+				String tag = "★ Aurora Chat+";
+				UI.pill(g, font, x1 - font.width(tag) - 14, y0 + 7, tag, UI.alpha(0xFFFF7EC8, 0.25f + 0.25f * hover), 0xFFFFD1E8);
+			}
 			UI.text(g, font, UI.trim(font, net.primlixe.aurorachat.ui.I18n.t(t.desc()), width - 56), x0 + 50, y0 + 15, UI.MUTED, false);
 		}
 
 		@Override
 		public void onClick(MouseButtonEvent e, boolean dbl) {
+			if (!net.primlixe.aurorachat.premium.Premium.has() && !net.primlixe.aurorachat.premium.Premium.themeFree(t.name())) { openShop(); return; }
 			ChatThemes.apply(t);
+			AbstractWidget.playButtonClickSound(Minecraft.getInstance().getSoundManager());
+		}
+
+		@Override
+		protected void updateWidgetNarration(NarrationElementOutput out) { defaultButtonNarrationText(out); }
+	}
+
+	/** Строка платной функции без ключа: название приглушено, справа «★ Aurora Chat+», клик — магазин. */
+	private final class LockedRow extends AbstractWidget {
+		private final String label;
+		private float hover;
+
+		LockedRow(int w, String label) {
+			super(0, 0, w, UI.rowH(), Component.literal(label));
+			this.label = net.primlixe.aurorachat.ui.I18n.t(label);
+			setTooltip(UI.tip("Доступно в Aurora Chat+ — нажми, чтобы узнать подробнее"));
+		}
+
+		@Override
+		protected void extractWidgetRenderState(GuiGraphicsExtractor g, int mx, int my, float pt) {
+			hover = UI.approach(hover, isHovered() ? 1 : 0, 0.3f);
+			int x0 = getX(), y0 = getY(), x1 = x0 + width, y1 = y0 + height;
+			UI.row(g, x0, y0, x1, y1, hover * 0.6f);
+			String tag = "★ Aurora Chat+";
+			int tw = font.width(tag) + 10;
+			UI.text(g, font, UI.trim(font, label, width - tw - 14), x0 + 6, y0 + (height - 8) / 2, UI.mix(UI.MUTED, UI.SUB, hover), false);
+			UI.pill(g, font, x1 - tw - 4, y0 + (height - 11) / 2, tag, UI.alpha(0xFFFF7EC8, 0.22f + 0.28f * hover), 0xFFFFD1E8);
+		}
+
+		@Override
+		public void onClick(MouseButtonEvent e, boolean dbl) {
+			openShop();
 			AbstractWidget.playButtonClickSound(Minecraft.getInstance().getSoundManager());
 		}
 
@@ -1743,8 +1824,10 @@ public class ChatSettingsScreen extends Screen {
 			int col = sel ? UI.TEXT : UI.mix(UI.SUB, UI.TEXT, hover);
 			int ty = y0 + (height - 8) / 2;
 			String sr = net.primlixe.aurorachat.ui.I18n.t(s.ru);
+			boolean lock = locked(s);
 			if (compact) UI.centered(g, font, sr.substring(0, 1), x0 + width / 2, ty, col);
-			else UI.text(g, font, UI.trim(font, sr, width - 12), x0 + 7, ty, col, false);
+			else UI.text(g, font, UI.trim(font, sr, width - (lock ? 22 : 12)), x0 + 7, ty, col, false);
+			if (lock && !compact) UI.text(g, font, "★", x1 - 11, ty, 0xFFFF7EC8, false);
 		}
 
 		@Override

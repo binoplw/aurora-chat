@@ -1,5 +1,8 @@
 package net.primlixe.aurorachat.compat;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import java.nio.file.Path;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.screens.Screen;
@@ -19,6 +22,20 @@ public final class Mc {
 	public static int guiTicks() { return Minecraft.getInstance().gui.getGuiTicks(); }
 
 	public static void overlay(Component c, boolean tinted) { Minecraft.getInstance().gui.setOverlayMessage(c, tinted); }
+
+	/** Тип «клавиатура» для KeyMapping. */
+	public static final InputConstants.Type KEYS = InputConstants.Type.KEYSYM;
+
+	public static boolean keyDown(int key) { return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), key); }
+
+	/** button — InputConstants.MOUSE_BUTTON_*. */
+	public static boolean mouseDown(int button) {
+		return org.lwjgl.glfw.GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), button) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+	}
+
+	public static void openPath(Path p) { Util.getPlatform().openPath(p); }
+
+	public static void openUri(String u) { Util.getPlatform().openUri(u); }
 
 	private Mc() {}
 }

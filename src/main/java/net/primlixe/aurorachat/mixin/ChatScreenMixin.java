@@ -1,5 +1,8 @@
 package net.primlixe.aurorachat.mixin;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.primlixe.aurorachat.compat.Mc;
+
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.Minecraft;
@@ -22,7 +25,6 @@ import net.primlixe.aurorachat.config.ChatConfig;
 import net.primlixe.aurorachat.gui.ChatSettingsScreen;
 import net.primlixe.aurorachat.ui.UI;
 import net.primlixe.aurorachat.ui.Widgets;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -381,17 +383,17 @@ public abstract class ChatScreenMixin extends Screen {
 			return;
 		}
 		if (aurorachat$in(aurorachat$logBtn, mx, my)) {
-			net.primlixe.aurorachat.compat.Mc.setScreen(new ChatLogScreen(null, ""));
+			net.primlixe.aurorachat.compat.Mc.setScreen(net.primlixe.aurorachat.premium.Premium.has() ? new ChatLogScreen(null, "") : new net.primlixe.aurorachat.premium.PremiumScreen(null));
 			cir.setReturnValue(true);
 			return;
 		}
 		if (e.button() == 1 && ChatCore.cfg().copyMenu) {
 			// доп. окна лежат поверх основного чата — сначала они, иначе меню открывалось для сообщения под окном
-			boolean overWin = ChatHud.enabled() && net.primlixe.aurorachat.chat.ExtraWindows.over(mx, my);
+			boolean overWin = ChatHud.enabled() && net.primlixe.aurorachat.premium.Premium.has() && net.primlixe.aurorachat.chat.ExtraWindows.over(mx, my);
 			GuiMessage m = overWin ? net.primlixe.aurorachat.chat.ExtraWindows.messageAt(mx, my) : ChatCore.messageAt(mx, my);
 			if (m != null) {
 				aurorachat$menu.open(m, (int) mx, (int) my, width, height, input,
-						q -> net.primlixe.aurorachat.compat.Mc.setScreen(new ChatLogScreen(null, q)));
+						q -> net.primlixe.aurorachat.compat.Mc.setScreen(net.primlixe.aurorachat.premium.Premium.has() ? new ChatLogScreen(null, q) : new net.primlixe.aurorachat.premium.PremiumScreen(null)));
 				cir.setReturnValue(true);
 				return;
 			}
@@ -402,7 +404,7 @@ public abstract class ChatScreenMixin extends Screen {
 			cir.setReturnValue(true);
 			return;
 		}
-		if (ChatHud.enabled() && net.primlixe.aurorachat.chat.ExtraWindows.click(mx, my, e.button())) {
+		if (ChatHud.enabled() && net.primlixe.aurorachat.premium.Premium.has() && net.primlixe.aurorachat.chat.ExtraWindows.click(mx, my, e.button())) {
 			cir.setReturnValue(true);
 			return;
 		}
@@ -420,14 +422,13 @@ public abstract class ChatScreenMixin extends Screen {
 			cir.setReturnValue(true);
 			return;
 		}
-		if (ChatHud.enabled() && sy != 0 && net.primlixe.aurorachat.chat.ExtraWindows.scroll(mx, my, sy)) {
+		if (ChatHud.enabled() && sy != 0 && net.primlixe.aurorachat.premium.Premium.has() && net.primlixe.aurorachat.chat.ExtraWindows.scroll(mx, my, sy)) {
 			cir.setReturnValue(true);
 			return;
 		}
 		if (!ChatHud.enabled() || sy == 0) return;
-		long win = Minecraft.getInstance().getWindow().handle();
-		boolean ctrl = GLFW.glfwGetKey(win, GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS || GLFW.glfwGetKey(win, GLFW.GLFW_KEY_RIGHT_CONTROL) == GLFW.GLFW_PRESS;
-		boolean alt = GLFW.glfwGetKey(win, GLFW.GLFW_KEY_LEFT_ALT) == GLFW.GLFW_PRESS || GLFW.glfwGetKey(win, GLFW.GLFW_KEY_RIGHT_ALT) == GLFW.GLFW_PRESS;
+		boolean ctrl = Mc.keyDown(InputConstants.KEY_LCONTROL) || Mc.keyDown(InputConstants.KEY_RCONTROL);
+		boolean alt = Mc.keyDown(InputConstants.KEY_LALT) || Mc.keyDown(InputConstants.KEY_RALT);
 		ChatConfig c = ChatConfig.get();
 		boolean over = ChatHud.over(mx, my);
 		if (over && ctrl) {
@@ -535,7 +536,7 @@ public abstract class ChatScreenMixin extends Screen {
 	@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
 	private void aurorachat$key(KeyEvent e, CallbackInfoReturnable<Boolean> cir) {
 		if (!ChatCore.active()) return;
-		if (e.key() == GLFW.GLFW_KEY_ESCAPE && (aurorachat$menu.isOpen() || aurorachat$emojiOpen || aurorachat$pickerOpen || aurorachat$laterOpen)) {
+		if (e.key() == InputConstants.KEY_ESCAPE && (aurorachat$menu.isOpen() || aurorachat$emojiOpen || aurorachat$pickerOpen || aurorachat$laterOpen)) {
 			aurorachat$menu.close();
 			aurorachat$emojiOpen = aurorachat$pickerOpen = aurorachat$laterOpen = false;
 			cir.setReturnValue(true);
@@ -543,8 +544,8 @@ public abstract class ChatScreenMixin extends Screen {
 		}
 		// Enter на строке из истории (↑) — отправить и НЕ закрывать чат: текст остаётся, жми Enter ещё раз.
 		// Ctrl+Enter — так же для любого текста.
-		boolean enter = e.key() == GLFW.GLFW_KEY_ENTER || e.key() == GLFW.GLFW_KEY_KP_ENTER;
-		boolean ctrl = (e.modifiers() & GLFW.GLFW_MOD_CONTROL) != 0;
+		boolean enter = e.key() == InputConstants.KEY_RETURN || e.key() == InputConstants.KEY_NUMPADENTER;
+		boolean ctrl = (e.modifiers() & InputConstants.MOD_CONTROL) != 0;
 		var hist = net.primlixe.aurorachat.chat.InputHistory.list();
 		boolean fromHistory = aurorachat$hpos >= 0 && aurorachat$hpos < hist.size() && hist.get(aurorachat$hpos).equals(input.getValue());
 		if (enter && ChatCore.cfg().historyRepeat && getFocused() == input && (fromHistory || ctrl)) {
@@ -568,15 +569,15 @@ public abstract class ChatScreenMixin extends Screen {
 			}
 		}
 		// Tab — дописать ник; ещё Tab — следующий подходящий
-		if (e.key() == GLFW.GLFW_KEY_TAB && (e.modifiers() & (GLFW.GLFW_MOD_CONTROL | GLFW.GLFW_MOD_ALT)) == 0
-				&& ChatCore.cfg().nickComplete && getFocused() == input && aurorachat$completeNick((e.modifiers() & GLFW.GLFW_MOD_SHIFT) != 0)) {
+		if (e.key() == InputConstants.KEY_TAB && (e.modifiers() & (InputConstants.MOD_CONTROL | InputConstants.MOD_ALT)) == 0
+				&& ChatCore.cfg().nickComplete && getFocused() == input && aurorachat$completeNick((e.modifiers() & InputConstants.MOD_SHIFT) != 0)) {
 			cir.setReturnValue(true);
 			return;
 		}
 		// ↑ / ↓ — история ввода, даже если открыт список подсказок команд (когда в истории есть подходящее)
 		ChatConfig hc = ChatCore.cfg();
-		if (hc.betterHistory && getFocused() == input && (e.key() == GLFW.GLFW_KEY_UP || e.key() == GLFW.GLFW_KEY_DOWN)) {
-			boolean up = e.key() == GLFW.GLFW_KEY_UP;
+		if (hc.betterHistory && getFocused() == input && (e.key() == InputConstants.KEY_UP || e.key() == InputConstants.KEY_DOWN)) {
+			boolean up = e.key() == InputConstants.KEY_UP;
 			var list = net.primlixe.aurorachat.chat.InputHistory.list();
 			int n = list.size();
 			int pos = aurorachat$hpos < 0 || aurorachat$hpos > n ? n : aurorachat$hpos;
@@ -589,9 +590,9 @@ public abstract class ChatScreenMixin extends Screen {
 			}
 		}
 		// Alt+1…9 — отправить быструю фразу №
-		if (ChatCore.cfg().quickPhrases && (e.modifiers() & GLFW.GLFW_MOD_ALT) != 0 && (e.modifiers() & GLFW.GLFW_MOD_CONTROL) == 0) {
-			int k = e.key() >= GLFW.GLFW_KEY_1 && e.key() <= GLFW.GLFW_KEY_9 ? e.key() - GLFW.GLFW_KEY_1
-					: e.key() >= GLFW.GLFW_KEY_KP_1 && e.key() <= GLFW.GLFW_KEY_KP_9 ? e.key() - GLFW.GLFW_KEY_KP_1 : -1;
+		if (ChatCore.cfg().quickPhrases && (e.modifiers() & InputConstants.MOD_ALT) != 0 && (e.modifiers() & InputConstants.MOD_CONTROL) == 0) {
+			int k = e.key() >= InputConstants.KEY_1 && e.key() <= InputConstants.KEY_9 ? e.key() - InputConstants.KEY_1
+					: e.key() >= InputConstants.KEY_NUMPAD1 && e.key() <= InputConstants.KEY_NUMPAD9 ? e.key() - InputConstants.KEY_NUMPAD1 : -1;
 			if (k >= 0) {
 				if (k < ChatCore.cfg().quickList.size()) aurorachat$quickSend(ChatCore.cfg().quickList.get(k));
 				// Windows присылает ещё и символ «1» — на следующем кадре вернём строку как была
@@ -602,8 +603,8 @@ public abstract class ChatScreenMixin extends Screen {
 			}
 		}
 		// Alt+G / Alt+L — канал отправки
-		if (ChatCore.cfg().channels && (e.modifiers() & GLFW.GLFW_MOD_ALT) != 0 && (e.key() == GLFW.GLFW_KEY_G || e.key() == GLFW.GLFW_KEY_L)) {
-			ChatCore.cfg().channel = e.key() == GLFW.GLFW_KEY_G ? "G" : "L";
+		if (ChatCore.cfg().channels && (e.modifiers() & InputConstants.MOD_ALT) != 0 && (e.key() == InputConstants.KEY_G || e.key() == InputConstants.KEY_L)) {
+			ChatCore.cfg().channel = e.key() == InputConstants.KEY_G ? "G" : "L";
 			ChatConfig.save();
 			// как и с Alt+цифрой: Windows присылает ещё символ «g»/«п» — на следующем кадре вернём строку как была
 			aurorachat$altKeep = input.getValue();
@@ -612,13 +613,13 @@ public abstract class ChatScreenMixin extends Screen {
 			return;
 		}
 		if (aurorachat$search != null && aurorachat$search.isFocused()) {
-			if (e.key() == GLFW.GLFW_KEY_ENTER || e.key() == GLFW.GLFW_KEY_KP_ENTER || e.key() == GLFW.GLFW_KEY_TAB) {
+			if (e.key() == InputConstants.KEY_RETURN || e.key() == InputConstants.KEY_NUMPADENTER || e.key() == InputConstants.KEY_TAB) {
 				setFocused(input);
 				cir.setReturnValue(true);
-			} else if (e.key() == GLFW.GLFW_KEY_UP || e.key() == GLFW.GLFW_KEY_DOWN) {
+			} else if (e.key() == InputConstants.KEY_UP || e.key() == InputConstants.KEY_DOWN) {
 				// ↑/↓ в поиске — сразу назад в строку ввода, ванильный чат пролистает историю
 				setFocused(input);
-			} else if (e.key() == GLFW.GLFW_KEY_ESCAPE && !aurorachat$search.getValue().isEmpty()) {
+			} else if (e.key() == InputConstants.KEY_ESCAPE && !aurorachat$search.getValue().isEmpty()) {
 				aurorachat$search.setValue("");
 				setFocused(input);
 				cir.setReturnValue(true);

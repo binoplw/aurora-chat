@@ -37,9 +37,17 @@
 - **Удобство** — меню по ПКМ, умный поиск, история между запусками, палитра «&» с градиентами, эмодзи, ники по Tab, отложенные сообщения, напоминания, АФК-автоответчик, антиспам, фильтр слов
 - **Не лагает** — около 1 мс на кадр при истории в 2000 сообщений
 
+## Free and Aurora Chat+
+
+The basic chat is free: movable window, 3 themes, G / L channels, All / G / L tabs.
+**Aurora Chat+** (one-time key, tied to your Minecraft name) unlocks everything else — get it on the [website](https://binoplw.github.io/aurora-chat/#premium), then `/achat key <key>`.
+This repository contains the free part; the code of Aurora Chat+ features is not published (stubs with the same API are in its place), so a build from source is the free edition.
+
+Базовый чат бесплатный. **Aurora Chat+** (разовый ключ на ник) открывает всё остальное. В репозитории — бесплатная часть, код функций Aurora Chat+ не публикуется.
+
 ## Requirements
 
-Minecraft **26.1.2**, Fabric Loader, **Fabric API**. [Mod Menu](https://modrinth.com/mod/modmenu) is optional.
+Minecraft **26.1–26.1.2, 26.2 or 26.3**, Fabric Loader, **Fabric API**. [Mod Menu](https://modrinth.com/mod/modmenu) is optional.
 Settings: `/achat` or ⚙ in the chat header.
 
 ## Building

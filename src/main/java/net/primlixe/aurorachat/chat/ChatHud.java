@@ -1,5 +1,8 @@
 package net.primlixe.aurorachat.chat;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.primlixe.aurorachat.compat.Mc;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -136,6 +139,7 @@ public final class ChatHud {
 			t.add(new TabDef(Channels.label('G'), net.primlixe.aurorachat.ui.I18n.t("Глобальный чат"), Kind.GLOBAL, null));
 			t.add(new TabDef(Channels.label('L'), net.primlixe.aurorachat.ui.I18n.t("Локальный чат"), Kind.LOCAL, null));
 		}
+		if (!net.primlixe.aurorachat.premium.Premium.has()) return t; // остальные вкладки — в Aurora Chat+
 		t.add(new TabDef(net.primlixe.aurorachat.ui.I18n.t("ЛС"), net.primlixe.aurorachat.ui.I18n.t("Личные сообщения"), Kind.DM, null));
 		if (c.clanTab) t.add(new TabDef(net.primlixe.aurorachat.ui.I18n.t("Клан"), net.primlixe.aurorachat.ui.I18n.t("Клановый чат (") + c.clanPrefix + ")", Kind.CLAN, null));
 		else t.add(new TabDef("@", net.primlixe.aurorachat.ui.I18n.t("Упоминания тебя"), Kind.MENTIONS, null));
@@ -281,9 +285,8 @@ public final class ChatHud {
 	}
 
 	public static void scroll(int lines) {
-		long win = Minecraft.getInstance().getWindow().handle();
-		boolean shift = org.lwjgl.glfw.GLFW.glfwGetKey(win, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT) == org.lwjgl.glfw.GLFW.GLFW_PRESS
-				|| org.lwjgl.glfw.GLFW.glfwGetKey(win, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+		boolean shift = Mc.keyDown(InputConstants.KEY_LSHIFT)
+				|| Mc.keyDown(InputConstants.KEY_RSHIFT);
 		float step = lines * (9 + ChatCore.cfg().lineSpacing) * 2 * ChatCore.cfg().scrollSpeed * (shift ? 3 : 1);
 		hoverPaused = false;
 		scrollPx = Math.max(0, Math.min(maxScroll, scrollPx + step));
@@ -291,9 +294,8 @@ public final class ChatHud {
 
 	/** Колесо мыши: дробные шаги (SmoothScroll, тачпад) не теряются; 3 строки за щелчок, Shift — страница. */
 	public static void wheel(double sy) {
-		long win = Minecraft.getInstance().getWindow().handle();
-		boolean shift = org.lwjgl.glfw.GLFW.glfwGetKey(win, org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT) == org.lwjgl.glfw.GLFW.GLFW_PRESS
-				|| org.lwjgl.glfw.GLFW.glfwGetKey(win, org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT) == org.lwjgl.glfw.GLFW.GLFW_PRESS;
+		boolean shift = Mc.keyDown(InputConstants.KEY_LSHIFT)
+				|| Mc.keyDown(InputConstants.KEY_RSHIFT);
 		float line = 9 + ChatCore.cfg().lineSpacing;
 		float step = (float) sy * line * 3 * ChatCore.cfg().scrollSpeed * (shift ? 4 : 1);
 		hoverPaused = false;
@@ -536,7 +538,7 @@ public final class ChatHud {
 			Meta m = ChatCore.meta(msg.content());
 			if (vis == ChatVisiblity.SYSTEM && (m.cat() == Category.PLAYER || m.cat() == Category.DM || m.cat() == Category.MENTION)) continue;
 			float alpha = 1f;
-			if (!preview && ExtraWindows.takesExclusive(msg, m)) continue; // ушло в отдельное окно
+			if (!preview && net.primlixe.aurorachat.premium.Premium.has() && ExtraWindows.takesExclusive(msg, m)) continue; // ушло в отдельное окно
 			// своё сообщение видно всегда — иначе кажется, что Enter не отправил (клан и чужой канал прятались)
 			boolean mine = m.sender() != null && m.sender().equalsIgnoreCase(selfName);
 			if (!mine && follow != 0 && m.channel() != 0 && m.channel() != follow) continue; // другой канал — скрыт, пока выбран этот
@@ -693,7 +695,7 @@ public final class ChatHud {
 			if (s.shadow && !net.primlixe.aurorachat.ui.Perf.lite() && oc > 0.05f) UI.shadow(g, 0, 0, pw, ph, r, oc * Math.min(1, panelA * 1.5f));
 			UI.roundGradient(g, 0, 0, pw, ph, r, UI.alpha(bgTop, panelA), UI.alpha(bgRgb, panelA));
 			// своя картинка поверх цвета фона: гаснет вместе с панелью (закрытый чат — прозрачнее)
-			if (!s.bgImage.isEmpty() && style == BgStyle.PANEL)
+			if (!s.bgImage.isEmpty() && style == BgStyle.PANEL && net.primlixe.aurorachat.premium.Premium.has())
 				net.primlixe.aurorachat.ui.BgImage.draw(g, pw, ph, r, s.bgImageOpacity * Math.min(1, panelA / Math.max(0.05f, s.bgOpacity)));
 			if (s.outline) UI.roundOutline(g, 0, 0, pw, ph, r, UI.alpha(UI.accent(), s.outlineOpacity * (0.45f + 0.55f * oc) * maxAlpha));
 			g.pose().popMatrix();
