@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "aurorachat",
+  "version": "${version}",
+  "name": "Aurora Chat",
+  "description": "Красивый и плавный чат: окно можно двигать и растягивать, свой фон и цвета, каналы G/L, вкладки, головы игроков, время, ×N, поиск, история и журнал, меню по ПКМ, эмодзи и уведомления.",
+  "authors": ["PrimLixe"],
+  "license": "MIT",
+  "contact": {
+    "homepage": "https://modrinth.com/mod/aurora-chat",
+    "sources": "https://github.com/binoplw/aurora-chat",
+    "issues": "https://github.com/binoplw/aurora-chat/issues"
+  },
+  "icon": "assets/aurorachat/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["net.primlixe.aurorachat.AuroraChatMod"],
+    "modmenu": ["net.primlixe.aurorachat.compat.ModMenuIntegration"]
+  },
+  "mixins": ["aurorachat.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "${mcdep}",
+    "java": ">=25",
+    "fabric-api": "*",
+    "auroralib": ">=1.1.0"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}

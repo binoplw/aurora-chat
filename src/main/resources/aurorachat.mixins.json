@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.primlixe.aurorachat.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ChatComponentAccessor",
+    "ChatComponentMixin",
+    "ChatScreenMixin",
+    "GuiGraphicsAccessor",
+    "GuiGraphicsMixin",
+    "GuiMixin",
+    "PlayerTabOverlayMixin",
+    "ScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

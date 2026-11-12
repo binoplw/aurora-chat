@@ -1,0 +1,270 @@
+270	Unread counters
+271	"Staff" tab instead of "System"
+272	Pause while the mouse is over the chat
+273	Off — the chat stops only when scrolled up (new ones collect under "↓ N new"). On — also when the mouse hovers
+274	Chat
+275	Aurora window: background, animations, tabs, moving. Off — vanilla rendering, but text improvements stay
+276	Size and position
+277	in game: ⠿ — move, any edge — resize, Ctrl+wheel — text, Alt+wheel — background
+278	Width
+279	Height
+280	Left offset
+281	Bottom offset
+282	Height when chat is closed
+283	Line spacing
+284	Lock window
+285	Hide move and resize handles
+286	Collapse window
+287	Only a couple of lines are visible in the open chat
+288	Window header
+289	Tabs, channel switch and buttons above the window
+290	G / L switch
+291	"Collapse" button
+292	Settings button
+293	Scrolling
+294	mouse wheel, PageUp/PageDown, Shift — faster
+295	It can be dragged with the mouse
+296	When scrolled up and new messages arrive
+297	Scroll speed
+298	Move in game
+299	Open the chat and drag the window by ⠿, resize by the top-right corner
+300	Reset size and position
+301	Style
+302	Panel — one window, bubbles — each message has its own background
+303	Background color
+304	Hue
+305	Saturation
+306	Brightness
+307	Opacity (chat open)
+308	Opacity (chat closed)
+309	Corner radius
+310	Window shadow
+311	Background image
+312	png / jpg from the config/aurorachat/backgrounds folder
+313	No image
+314	Image
+315	The folder is empty — press "Open folder", put an image there and come back
+316	Visible with the "Panel" background style
+317	Image visibility
+318	How to fit
+319	The image is visible only with the "Panel" background style.
+320	image:
+321	Open the images folder
+322	Put an image there, then pick it above (the list refreshes when you return to the section)
+323	Background gradient
+324	Top — second color, bottom — background color
+325	Second color
+326	Second color hue
+327	Accent and outline
+328	Accent color
+329	Window outline
+330	Thin frame in the accent color
+331	Outline brightness
+332	Regular text color
+333	Text opacity
+334	Text shadow
+335	Default colors
+336	General
+337	Animations
+338	Master switch for all chat animations
+339	Overall speed
+340	Easing
+341	Smooth — fast and soft, Spring — with a light bounce, Soft — slow start and finish
+342	Window opening
+343	The window grows smoothly when the chat opens
+344	Opening speed
+345	Tab switching speed
+346	New messages
+347	Appear animation
+348	A new message appears smoothly and gently lifts the old ones
+349	How they appear
+350	Appear duration
+351	%.2f s
+352	Slide distance
+353	Lift speed of old messages
+354	Smooth scrolling
+355	Scroll smoothness
+356	Fading
+357	Messages visible for
+358	Fade duration
+359	Sending
+360	The text flies straight to its place in the chat window and stays there without a second animation
+361	Flight time
+362	Mod panels and windows
+363	Emoji, palette, "send later" open smoothly
+364	Panel opening time
+365	Smooth switching of settings sections
+366	Default smoothness
+367	Chat optimization
+368	FPS now:
+369	· saving mode
+370	When FPS drops below the threshold, the chat turns off animations and shadows by itself, then turns them back on
+371	FPS threshold
+372	Always saving mode
+373	No animations and shadows — the lowest load
+374	Smoothness for the game itself — works everywhere, not only in chat. Each can be turned off.
+375	Screens
+376	inventory, chests, pause, settings
+377	Duration
+378	And the main menu
+379	In-game interface
+380	The smooth hotbar is now handled by SmoothScroll (double smoothing delayed the frame) — its settings are in Mod Menu
+381	The frame slides to the slot instead of jumping
+382	Frame speed
+383	Game optimization
+384	For the game's own FPS, Sodium, Lithium, ImmediatelyFast and Dynamic FPS work best — Aurora Chat is compatible with them.
+385	You already have:
+386	. They handle the game's FPS — Aurora Chat doesn't duplicate them to avoid conflicts.
+387	Open Minecraft video settings
+388	Input line in chat colors
+389	G / L badge on the left
+390	The channel still switches: Alt+G / Alt+L and in the chat header
+391	Selected only with the mouse — the ↑/↓ arrows scroll through history
+392	:heart: → ❤ when sending
+393	Clicking a color, style or gradient inserts its code into the line
+394	Ste + Tab → Steve; Tab again — next name, Shift+Tab — back
+395	Gray name hint
+396	While you type a name, its ending is shown on the right
+397	Counts with colors and gradients — what will be sent to the server
+398	Above the input line you see how a message with &-codes will look
+399	Copy, reply, mention, find in history
+400	Unfinished text is kept, even after a restart
+401	Templates {xyz} {nick} {time}…
+402	{xyz} coordinates · {x} {y} {z} · {ник} · {время} · {дата} · {сервер} · {мир} · {hp} · {пинг} · {fps}
+403	Quick phrases ⚡
+404	above the input line: click — send right away, you can click repeatedly
+405	Quick phrases panel
+406	LMB — send · Shift+LMB — insert into the line · RMB — delete · Alt+1…9 — send №
+407	Phrase
+408	message or /command
+409	Delete phrase
+410	Add phrase
+411	Hi everyone!
+412	Or right in chat: type text and press "＋" on the panel
+413	History ↑ / ↓
+414	Own input history
+415	No duplicates, more lines. Off — like the regular game
+416	Search by beginning
+417	Type "/tp" and press ↑ — only /tp commands are listed
+418	↑ + Enter — send and keep open
+419	A line from history is sent, and the chat stays open with the same text — press Enter again. Ctrl+Enter — the same for any text
+420	Keep after restart
+421	Passwords (/login, /reg…) are not saved to the file
+422	Lines to keep
+423	Clear input history (
+424	Input history cleared
+425	Understand HEX and gradients
+426	The server must support HEX colors (EssentialsX, CMI, ChatControl, etc.)
+427	Format for the server
+428	&#RRGGBB — EssentialsX, CMI and most · &x&R&R… — Spigot/Bungee · <#RRGGBB> — MiniMessage
+429	Preview above the input line
+430	Write with a gradient
+431	everything you write is sent in the chosen gradient
+432	Off
+433	Gradient
+434	Quick: RMB on a gradient in the "&" palette by the input line, or /achat grad <name>
+435	Also in private messages
+436	/m Nick text → text in the gradient
+437	Pick a gradient — an example will be here
+438	This is how your messages will look
+439	&#F80 or &#FF8800 — a color.   &{#FF0000-#0000FF}text — a gradient, any number of colors.
+440	&{fire}text — a saved gradient.   A gradient lasts until &{/}, &r or the next color; &l &o &n &m work inside.
+441	A long message is shortened to 256 characters automatically.
+442	Test
+443	&{rainbow}Hi everyone! &#55FFFFand this is HEX
+444	type text with codes
+445	Saved gradients
+446	&{name}text
+447	New gradient
+448	Name
+449	for example: mine
+450	#FF0000 #FFAA00 #FFFF00 — two or more
+451	Save gradient
+452	A name and colors are needed, for example #FF0000 #0000FF
+453	Restore default gradients
+454	Channels
+455	as on servers: G — global, L — local
+456	Switch above the chat, G and L tabs, badges on messages
+457	Write to
+458	Quick: Alt+G / Alt+L in the open chat
+459	Global chat prefix
+460	usually "!"
+461	Local chat prefix
+462	usually empty
+463	Look
+464	Channel filter in "All" (click "All")
+465	Clicking the "All" tab: only L → only G → both. This only changes what you see — where you write stays the same (G only if you add "!" yourself)
+466	G / L badges on messages
+467	G / L row highlight
+468	A bright stripe on the left and a row tint in the channel color — visible even when the chat scrolls fast
+469	Row tint
+470	Remove the [G] / [L] tag from text
+471	The tag is replaced with a neat colored badge
+472	G color
+473	L color
+474	G / L look
+475	labels on messages, in the header and on tabs
+476	Global label
+477	G, Glob, ⚡ — up to 6 characters
+478	Local label
+479	L, Loc, ☘ — up to 6 characters
+480	How to show on messages
+481	Label shape
+482	Label text color — automatic
+483	Dark text on a light label, white on a dark one
+484	Label text color
+485	Left stripe width
+486	none
+487	Message text in the channel color
+488	Default G / L look
+489	Recognition
+490	regular expressions at the start of the line
+491	Global pattern
+492	Local pattern
+493	Default patterns
+494	Format
+495	Time color
+496	Date on hover over the time
+497	Hover over a link — domain, full address and a warning if it looks like a scam (shortener, bare IP, "steam" in a foreign domain, .exe)
+498	Hide joins/leaves
+499	Convenience
+500	"↩ reply" button on a message
+501	Appears on hover: DM — /m Nick, regular — "Nick, "
+502	RMB on a message → "Pin"; a strip at the top of the window
+503	Translator
+504	Google Translate · text goes online only when translating
+505	Translator in the message menu
+506	RMB on a message → "⇄ Translate": the translation appears as a second line, RMB → "Show original" removes it
+507	Translate to
+508	"Same as game" — into the language selected in Minecraft settings
+509	Auto-translate foreign languages
+510	Player messages in another script are translated automatically (at most 20 per minute). Each such message is sent to Google
+511	Translate my text to
+512	/achat tr text — the translation goes into the input line, check it and press Enter
+513	⇄ button by the input line
+514	Translates what you typed right in the line (DM "/m nick" and "!" are kept); RMB on the button — another language
+515	visible only to you · RMB on a message → "Rename"
+516	Show custom names
+517	The real name is shown on hover
+518	Remove custom name
+519	Add
+520	Steve Stevie  (nick, space, name)
+521	Save name
+522	Example: Steve Stevie
+523	Action wheel
+524	look at a player + G (the key can be changed in "Controls")
+525	Player action wheel
+526	Hold G and move the mouse to an action, or press G and click
+527	Screen dimming
+528	Aim distance
+529	bl.
+530	Special effects
+531	when you use an action
+532	On-screen effects
+533	A flash, a wave, flying icons and the "Hug → Nick" label
+534	Particles at the player
+535	Hearts/sparks/notes above the player in the world — only you see them
+536	Sound
+537	A short chord of three notes
+538	Actions
+539	{ник} — player's name · "?" before a command — insert into the chat line, don't send

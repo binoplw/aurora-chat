@@ -1,0 +1,270 @@
+0	All features
+1	Themes
+2	Chat window
+3	Background & colors
+4	Message style
+5	Smoothness
+6	Minecraft
+7	Input line
+8	Colors & gradients
+9	Channels G / L
+10	Messages
+11	Automation
+12	Player actions
+13	Moderation
+14	Tabs
+15	Extra windows
+16	Staff
+17	Server login
+18	Notifications
+19	History
+20	Filter
+21	Settings window
+22	Same as game
+23	Close (Esc)
+24	no color
+25	— bold
+26	All features of the mod are here — any of them can be turned off. Detailed settings for each are in their own section on the left.
+27	Main
+28	Aurora Chat enabled
+29	Turn off — and the chat becomes fully vanilla
+30	Custom chat window
+31	Off — vanilla rendering, text improvements stay
+32	Chat animations
+33	Smooth panels
+34	Smooth sending
+35	Save resources at low FPS
+36	Rule-based moderation
+37	Player action wheel
+38	Quick phrases above the input line
+39	Compatibility with modpack mods
+40	detected and configured automatically
+41	Smooth screen opening
+42	The smooth hotbar is handled by SmoothScroll — its settings are in Mod Menu
+43	Smooth hotbar slot selection
+44	Player list (Tab) slides in
+45	Title bar
+46	G / L switch in the header
+47	"Collapse" button in the header
+48	Settings button in the header
+49	Settings can always be opened with /achat
+50	Scrollbar
+51	"↓ new" badge
+52	Message timestamps
+53	Player heads
+54	Icons on system messages
+55	Colored stripe on the left
+56	Colored names
+57	Merge repeats ×N
+58	Clickable links
+59	Link preview
+60	Translator (RMB → "Translate")
+61	Compact joins/leaves
+62	"↩ reply" button
+63	Pinned messages
+64	Custom names for players
+65	Mentions
+66	DM and mention cards
+67	Separator when joining a server
+68	G / L badge in the input line
+69	Styled input line
+70	Chat search
+71	History button ☰
+72	Emoji panel ☺
+73	Emoji :codes:
+74	"Send later" button ⏱
+75	Translate button ⇄
+76	Color palette "&"
+77	Name completion with Tab
+78	Character counter
+79	Color preview
+80	Right-click menu
+81	Drafts
+82	Templates {xyz} {nick}…
+83	Own input history ↑ / ↓
+84	Colors
+85	Auto-color messages
+86	HEX colors and gradients
+87	Auto-greetings
+88	AFK auto-reply
+89	"While you were away" summary
+90	Anti-spam
+91	Reminders
+92	Scheduled messages
+93	Auto-login on server
+94	Staff watch
+95	Sounds
+96	Mention sound
+97	Private message sound
+98	Reminder sound
+99	Staff sound
+100	Logs
+101	Keep chat after restart
+102	Keep input history
+103	Log to files
+104	Console (`)
+105	Record events for the console screen
+106	My themes
+107	save the current look, send the code to a friend — they can paste it
+108	New theme name
+109	for example: My night theme
+110	Save current look as a theme
+111	My theme
+112	Everything set in "Background & colors", "Message style", "Chat window" (text size) — in one theme
+113	Paste a theme from the clipboard
+114	No theme code in the clipboard (it starts with AURORA-THEME:)
+115	Theme code is damaged
+116	A friend copied the code of their theme — paste it here
+117	Copy the code of the current look
+118	Code copied — send it to a friend ✔
+119	Apply theme
+120	⧉ Code "
+121	" to clipboard
+122	Copied ✔
+123	✕ Delete "
+124	Quick edit
+125	the main things are here, all details are in "Background & colors" and "Message style"
+126	Layout
+127	Custom
+128	Background
+129	Accent
+130	Text
+131	Background opacity
+132	Corner radius
+133	Text size
+134	Ready-made themes
+135	click — apply, then you can tweak any detail
+136	Reset the whole look to default
+137	Auto-color
+138	a color code is added to your messages automatically
+139	Works if the server allows colored chat (&-codes)
+140	The first 16 squares are regular Minecraft colors (work on any server). Other colors and the spectrum are HEX (&#RRGGBB): the server must support HEX colors.
+141	Private (/m /msg /w /r)
+142	Global chat (G)
+143	Local chat (L)
+144	Custom code for private
+145	&a&l, &#55FF99 or &{fire}
+146	Custom code for G
+147	&e, &#FFAA00 or &{sunset}
+148	Custom code for L
+149	&f, &#DDDDDD or &{ocean}
+150	Private message commands
+151	comma-separated, without /
+152	people write "hi Nick", "hey Nick", "qq Nick" — I reply myself
+153	Reply to greetings
+154	The reply is sent after 1–2.5 s, not more often than the per-player pause
+155	Global (G)
+156	Local (L)
+157	Current channel
+158	Where to reply
+159	Reply with the same word
+160	"qq Nick" → "qq Steve". Off — a random reply from the list below
+161	Reply to "hi everyone"
+162	Even if your name wasn't mentioned
+163	Reply in clan: how to write to the clan chat
+164	empty — don't reply in clan · /c or /clan chat {text}
+165	Per-player pause
+166	Greeting words
+167	hi, hey, qq, q, hello…
+168	Replies (separated by |, {name} — nick)
+169	Hi, {name}! | hey, {name}
+170	/achat afk — turn on manually
+171	Auto-reply
+172	Replies to private messages while you are inactive
+173	AFK after inactivity
+174	manual only
+175	min
+176	Reply text
+177	I'm AFK right now, will reply later :)
+178	Reply command ({name}, {text})
+179	When you come back after idling, a card appears in chat: who sent you DMs, who mentioned you, violations, which staff joined. Works without the auto-reply too
+180	Not more often per player
+181	repeats and flood from one player
+182	Identical messages in a row are merged into ×N anyway
+183	Hide repeats for
+184	off
+185	Flood: more messages than
+186	…within
+187	Tone down CAPS
+188	Messages in ALL CAPS are shown in lowercase
+189	/achat remind 10m text · /achat remind 20:30 text · /achat timer 5m
+190	Reminder sound
+191	New reminder
+192	10m go to the event  ·  20:30 raid
+193	Add reminder
+194	Reminder
+195	Couldn't read the time — example: 10m text
+196	Delete reminder
+197	⏱ button in chat · /achat later 10m text
+198	Off — the queue is not sent and the ⏱ button is hidden
+199	New scheduled message
+200	10m good luck everyone at the event  ·  20:30 /m Steve let's go
+201	Schedule
+202	Example: 10m text
+203	the queue is empty
+204	Cancel sending
+205	commands in order when joining
+206	Auto-login enabled
+207	Master switch for all servers below
+208	Passwords are stored only on this PC: config/aurorachat/autojoin.json · hidden in the console and input history.
+209	Server
+210	no address set
+211	Enabled
+212	Address (part of it) or * for all
+213	Commands separated by ;
+214	/login password ; /warp spawn
+215	Pause between commands
+216	%.1f s
+217	Delete
+218	Add for the current server (
+219	/login password
+220	Add for all servers (*)
+221	Separate windows
+222	in game: header — move, corner — resize, wheel — scroll
+223	Window
+224	— name
+225	name
+226	What to show
+227	Words separated by commas
+228	for example: sell, buy
+229	Only in this window
+230	Such messages are not duplicated in the main chat
+231	Visible when chat is closed
+232	Delete window
+233	Window for private messages
+234	Window for global chat (G)
+235	Window for clan (⚑)
+236	Window with your own words
+237	Custom:
+238	Default — as in game · Uniform — Unifont, crisp and the same height
+239	from a resource pack (optional)
+240	namespace:name, for example mypack:clean
+241	how messages look
+242	Compact — all in one line · Discord-like — name and time above the text, avatar, groups · Messenger — bubbles, yours on the right
+243	Message font
+244	Lines
+245	Padding inside a message
+246	Spacing between messages
+247	Bubble corner radius
+248	Color by message type or name
+249	Stripe width
+250	Alternate row background
+251	Every second row is slightly lighter
+252	Separators between messages
+253	Highlight on hover
+254	Players
+255	Head size
+256	✦ + − ✉ @ instead of the head
+257	Time and channels
+258	Time
+259	Channel label
+260	How to show G / L on a message
+261	Names and time
+262	Bold names
+263	For new messages
+264	Italic names
+265	Underlined names
+266	Names in CAPS
+267	Time size
+268	Bold time
+269	Tab style

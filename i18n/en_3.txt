@@ -1,0 +1,260 @@
+540	Off — the action is hidden from the wheel, but not deleted
+541	for example: Hug
+542	Action
+543	Command
+544	/hug {nick}
+545	Effect
+546	↑ Up
+547	Delete "
+548	Add action
+549	Up to 12 actions in the wheel
+550	Restore defaults (Hug, Headpat)
+551	All · G · L · DM · Clan · Staff · custom
+552	Show tabs
+553	Click "All": L → G → both. Where you write doesn't change
+554	Clan
+555	instead of the "@" tab
+556	"Clan" tab (off — bring back "@")
+557	Remove clan from the rest of the chat
+558	Clan message prefix
+559	CLAN:
+560	Custom tabs
+561	messages with any of the words
+562	Tab
+563	Delete tab
+564	Add tab
+565	sound and notification when someone writes your name
+566	Highlight your name with a color
+567	Mention color
+568	Extra words
+569	comma-separated
+570	Pop up at the top right
+571	Chat history
+572	Messages to keep
+573	Don't clear when leaving a server
+574	Save the last
+575	Log
+576	Write the log to files
+577	System messages in the log
+578	Open history (H)
+579	Console
+580	` key · /achat console
+581	Record events
+582	Chat, commands, hidden, joins, staff
+583	Open console
+584	Console lines
+585	Log folder
+586	Ignore players
+587	names separated by commas
+588	Hide messages if found
+589	words or regex separated by commas
+590	how this window looks
+591	Язык / Language
+592	Как в игре / Game
+593	Русский
+594	Check for updates
+595	Asks Modrinth once per launch whether there is a new version
+596	Size
+597	Applied when you release the slider
+598	Font
+599	Dense rows
+600	Chat preview on the right
+601	Visible when the window is wide enough
+602	Game dimming
+603	Selection color
+604	Same as chat accent
+605	Off — your own calm color below
+606	Custom color
+607	Settings window themes
+608	click — apply, below you can tweak any color
+609	Custom window colors
+610	the theme becomes "Custom"
+611	Background behind the window
+612	Panels
+613	Panel opacity
+614	Captions
+615	Dim text
+616	Light theme (dark lines and rows)
+617	Turn on if the panels are light — otherwise rows and frames won't be visible
+618	Panel corner radius
+619	Default window look
+620	settings · everything is saved instantly
+621	PREVIEW
+622	the result will appear here
+623	}text ·
+624	· ✕ — delete
+625	shimmer
+626	Shimmer — iridescent
+627	#%06X · click or drag the mouse
+628	All
+629	All messages
+630	Global chat
+631	Local chat
+632	DM
+633	Private messages
+634	Clan chat (
+635	Mentions of you
+636	Helpers and moderators: their messages and alerts about them
+637	System
+638	Server messages, joins and leaves
+639	Custom tab:
+640	broke "
+641	Welcome to the server! Have a good game ✦
+642	Steve: hi everyone!
+643	Alex: who's coming with me to the mine?
+644	[Steve -> me] got a minute?
+645	Alex: Player, look here!
+646	All · only channel
+647	All · channels
+648	☾ AFK  ·
+649	Now: channel
+650	Now: both channels G and L
+651	(+ system and DM) · click —
+652	G and L together
+653	only L
+654	· writing to
+655	new
+656	Expand chat
+657	Collapse chat (double-click the title too)
+658	Drag to move the chat · double-click — back in place
+659	Drag to resize
+660	Chat settings
+661	Where to write: G — global (prefix "
+662	"), L — local · Alt+G / Alt+L
+663	↩ DM
+664	Reply privately
+665	Reply
+666	(mention)
+667	· click — next
+668	⇄ Show original
+669	⇄ Translate (%s)
+670	⧉ Copy text
+671	✎ Copy with colors (&)
+672	{ } Copy JSON
+673	⌚ Copy time (
+674	📌 Pin
+675	✉ Reply in DM
+676	@ Mention %s
+677	✎ Rename for me
+678	⧉ Copy name
+679	⚖ Punish by rule… ▸
+680	⌕ Find in history
+681	✕ Remove from chat
+682	· was
+683	Copied
+684	RMB on a message — menu
+685	⌕ search · nick: channel: type: date:
+686	Smart search:
+687	⇄ Translation copied
+688	⇄ Translation
+689	⏱ Scheduled
+690	Colors, styles and gradients
+691	Send later (
+692	in queue)
+693	Translate what you typed to
+694	(RMB — another language)
+695	Hide quick phrases
+696	Quick phrases — saved messages and commands
+697	Type some text first
+698	Send in:
+699	h
+700	Channel:
+701	· click or Alt+G / Alt+L
+702	✔ sent
+703	· Enter — again, Esc — close
+704	＋ save phrase
+705	↶ undo
+706	Type a message or command and press ＋
+707	It will be saved here — then sent with one click
+708	Save: §f
+709	Restore deleted: §f
+710	LMB — send
+711	· Shift+LMB — insert · RMB — delete
+712	· now
+713	Search
+714	⌕ search · nick:Steve channel:G type:dm date:yesterday after:18:00
+715	All days
+716	One day
+717	Search all days of the selected server
+718	Type:
+719	⌂ Logs folder
+720	⧉ Copy all
+721	Lines copied:
+722	✕ Delete day
+723	Delete for sure?
+724	Day deleted
+725	Done
+726	☰ CHAT HISTORY
+727	msgs
+728	Servers
+729	empty so far
+730	Days
+731	(today)
+732	Chat messages will appear here
+733	Nothing found
+734	Show original
+735	Translate to
+736	LMB — copy · RMB — with colors · ⇄ — translate
+737	LMB — copy · RMB — with colors
+738	Nothing to translate
+739	Translation failed — no connection
+740	Already in this language
+741	Copied with colors
+742	⌕ search the log
+743	Close
+744	▶ Resume
+745	⏸ Pause
+746	⧉ Copy
+747	✕ Clear
+748	⌂ Logs
+749	Input
+750	message or /command — Enter to send, ↑↓ history
+751	CONSOLE
+752	singleplayer
+753	menu
+754	·  online
+755	·  §c⚑ staff
+756	·  lines
+757	types:
+758	Empty so far — everything that happens in chat and on the server will appear here
+759	↓ to newest (
+760	⏸ paused — new lines are not added
+761	LMB — copy line
+762	Line copied
+763	Not connected to a server
+764	Bold &l
+765	Italic &o
+766	Underlined &n
+767	Strikethrough &m
+768	Obfuscated &k
+769	Reset &r
+770	Colors · click — insert code
+771	— first gradient color
+772	— second color
+773	Gradient: click the 1st color
+774	Gradient: click the 2nd color
+775	Gradient from two colors…
+776	RMB — stop writing with this gradient
+777	Click — insert · RMB — always write with it
+778	Mouse wheel — more gradients (
+779	✎ Writing:
+780	· click — turn off
+781	RMB on a gradient — always write with it
+782	empty response
+783	Aurora Chat: translation failed: {}
+784	Failed: no connection to Google Translate
+785	The message is already in this language (
+786	Translation
+787	· Google⏎§7RMB — show original
+788	Commands are not translated — only DMs (/
+789	nick text)
+790	Українська
+791	Беларуская
+792	Қазақша
+793	Connecting: §f
+794	Disconnected from server
+795	Aurora Chat loaded
+796	Auto-punishments cancelled:
+797	Channel: §f
+798	Channel: §fglobal
+799	Channel: §flocal

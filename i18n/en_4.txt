@@ -1,0 +1,226 @@
+800	Chat window moved back into place
+801	Settings reloaded
+811	☾ AFK on — the auto-reply will answer private messages
+812	AFK off, welcome back!
+813	No reminders
+814	Reminders deleted
+815	Couldn't read the time. Examples: §f10m text§c, §f1h30m text§c, §f20:30 text
+816	⏰ I'll remind you at
+817	Timer
+818	is up
+819	Timer is up
+820	Example: §f/achat timer 5m
+821	⏱ Timer:
+822	No scheduled messages
+823	Scheduled messages cancelled
+824	Example: §f/achat later 10m text §cor §f/achat later 20:30 text
+825	⏱ Will send
+826	Name for §f
+827	reset
+828	is now shown in your chat as §d
+829	(only you see it)
+831	Translator: foreign → §f
+832	, mine → §f
+833	, auto-translate
+834	. §f/achat tr <text>§7 — translate your text into the input line, §f/achat tr auto on|off
+835	Auto-translate of foreign languages enabled
+836	Auto-translate disabled
+837	Translating…
+838	Writing without a gradient. §7/achat grad <name>
+839	Writing with gradient: §f
+840	(/achat grad off — turn off)
+841	Writing gradient turned off
+842	Now writing with gradient:
+843	No such gradient. The list is in /achat → "Colors & gradients"
+847	Removed:
+848	Not in the list
+849	Pinned messages cleared
+857	Business
+858	graphite, strict lines, time on the left, window title
+859	name and time above the message, avatars, message groups
+860	bubbles: yours on the right in blue, others on the left with an avatar
+861	dark green bubbles, yours are emerald
+862	black background, round blue bubbles
+863	dense stream chat, bold colored names
+864	calm dark, light blue accent, name above the text
+865	work style: name above the text, strict lines
+866	like a stream chat: time on the left, avatars
+867	steel blue, separators
+868	graphite and green, name above the message
+869	Terminal
+870	green text on black, nothing extra
+871	dark glass and an iridescent accent
+872	Midnight
+873	deep blue with a soft gradient
+874	Neon
+875	black background, bright pink outline
+876	Sunset
+877	warm gradient from plum to amber
+878	Forest
+879	emerald, calm
+880	Bubbles
+881	each message has its own background
+882	Minimal
+883	no background, only text with a shadow
+884	Classic
+885	almost like the vanilla chat
+886	Light glass
+887	light translucent panel
+888	Sakura
+889	soft pink gradient
+890	Ocean
+891	turquoise depth
+892	Coffee
+893	warm brown, name above the text
+894	Vaporwave
+895	pink and blue retro
+896	Gold
+897	black with a golden outline
+898	Ruby
+899	dark red, bubbles
+900	Arctic
+901	cold light blue, messenger
+902	Matrix
+903	green lines, no corners
+904	Lavender
+905	lilac glass
+906	Coal
+907	dense black, orange accent
+908	Graphite
+909	strict dark, blue accent
+910	deep blue
+911	Aurora
+912	purple glass
+913	like in Discord
+914	blue-gray, soft corners
+915	black and green
+916	dark with purple
+917	steel blue
+918	green on black, no corners
+919	black and pink neon
+920	Cyberpunk
+921	yellow and turquoise
+922	warm dark red
+923	Cherry
+924	dark with cherry
+925	emerald
+926	sea turquoise
+927	Chocolate
+928	brown and caramel
+929	black with gold
+930	Monochrome
+931	black and white, no color
+932	Glass
+933	transparent panels over the game
+934	Light
+935	white panels, blue accent
+936	Cream
+937	warm light
+938	Mint
+939	light green
+940	Pink
+941	light with pink
+942	Sky
+943	light blue
+944	Look at a player to choose an action
+945	No actions — add them in "⚙ Configure"
+946	to the chat line:
+947	Move the mouse to an action and release — releasing in the center does nothing
+948	LMB or 1…
+949	— choose · Esc — cancel
+950	⚙ Configure
+952	link
+953	✔ a site from your allowed list / the server address
+954	No obvious signs of a scam — but open it only if you trust it
+955	Click — open (the game will ask for confirmation)
+956	can't parse the address
+957	no encryption (http, not https)
+958	a bare IP address instead of a site name
+959	mixed alphabets in the address — a common fake of a well-known site
+960	shortened link — you can't see where it leads
+961	" in a foreign domain — looks like phishing (the real one:
+962	a hidden "@" in the address — opens a completely different site
+963	link to a .
+964	file — don't run unknown programs
+965	many hyphens in the domain — often used to disguise fakes
+966	Private
+967	Global G
+968	Local L
+969	Custom words
+970	(in
+971	⏰ Reminder: §f
+972	⏰ Reminder
+973	Scheduled: §f
+974	⏱ Scheduled message sent
+975	AFK reply
+976	☾ AFK reply sent
+977	☾ While you were away (
+978	Latest messages:
+979	✉ DMs:
+980	from
+981	@ Mentioned by:
+982	⚑ Violations:
+983	· latest:
+984	Details — /achat punish
+985	★ Staff joined:
+986	Welcome back!
+987	DMs ·
+988	mentions ·
+989	violations
+990	and more
+991	heads in chat, cards and the wheel — with TLauncher skins
+992	smooth hotbar — from SmoothScroll; chat wheel — from Aurora Chat
+993	history size — from "History" in Aurora Chat
+994	the action wheel aims from the free camera
+995	own keys (mouse 5) — don't overlap with the wheel
+996	key macros — make sure they don't match G/H
+997	when zoomed, the wheel picks the player with a precise ray
+998	file not found in the backgrounds folder
+999	format not supported
+1000	couldn't open:
+1008	@ Mention from %s
+1009	@ Mention
+1010	✉ Private from %s
+1017	Auto-login: §f
+1018	commands for
+1019	(auto-login)
+1020	↪ Auto-login:
+1021	Panel
+1022	No background
+1023	Slide from the left
+1024	Rise from below
+1025	Fade in
+1026	Zoom
+1027	Instant
+1028	Smooth
+1029	Spring
+1030	Soft
+1031	Linear
+1032	Pills
+1033	Underline
+1034	Text only
+1035	G/L badge
+1036	Text [G]
+1037	Stripe color
+1038	Compact
+1039	Like Discord
+1040	Messenger
+1041	Right
+1042	Left
+1043	Fill (crop)
+1044	Stretch
+1045	Tile
+1046	Pill
+1047	Square
+1048	Circle
+1049	Outline
+1050	Rise
+1051	Slide from the side
+1052	Hearts
+1053	Sparks
+1054	Stars
+1055	Notes
+1056	Confetti
+1057	No effect
+1058	Suggest
+1059	Issue myself

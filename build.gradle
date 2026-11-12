@@ -1,0 +1,79 @@
+plugins {
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+base {
+	archivesName = 'aurora-chat'
+}
+
+// Переходник между версиями: 26.1–26.1.2 — src/v261, 26.2+ — src/v262
+def mcv = project.minecraft_version.tokenize('.').collect { it as int }
+// «~26.2» = 26.2.x — версия игры для fabric.mod.json; в имени файла — тоже
+project.ext.mcdep = '~' + mcv[0] + '.' + mcv[1]
+version = project.version + '+mc' + project.minecraft_version
+def compatDir = (mcv[0] > 26 || (mcv[0] == 26 && mcv.size() > 1 && mcv[1] >= 2)) ? 'src/v262/java' : 'src/v261/java'
+// Редакция: личная (все функции) или публичная для Modrinth (-Pedition=public: без функций под Mineblaze)
+def publicEdition = true // GitHub-версия всегда публичная
+def editionDir = layout.buildDirectory.dir('generated/edition').get().asFile
+def editionFile = new File(editionDir, 'net/primlixe/aurorachat/Edition.java')
+editionFile.parentFile.mkdirs()
+editionFile.text = '''package net.primlixe.aurorachat;
+
+/** Создаётся сборкой. PUBLIC — версия для Modrinth: без автоответа на викторины, модерации и слежки за персоналом. */
+public final class Edition {
+	public static final boolean PUBLIC = ''' + publicEdition + ''';
+
+	private Edition() {}
+}
+'''
+if (publicEdition) version = version + '-public'
+sourceSets { main { java { srcDir compatDir; srcDir editionDir } } }
+
+repositories {
+	// Aurora Lib — соседний проект, jar под каждую версию игры: ../AuroraLib/build/libs/aurora-lib-1.1.0+mc26.2.jar
+	flatDir { dirs 'libs', '../AuroraLib/build/libs' } // libs/ — готовый jar Aurora Lib
+	maven { name = 'Terraformers'; url = 'https://maven.terraformersmc.com/releases/' }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	// Aurora Lib — обязательная библиотека (собирается в ../AuroraLib)
+	implementation "net.primlixe:aurora-lib:${project.auroralib_version}+mc${project.minecraft_version}"
+	include "net.primlixe:aurora-lib:${project.auroralib_version}+mc${project.minecraft_version}" // библиотека внутри файла мода — игроку ставить один jar
+	// Mod Menu: only for compiling the integration, optional at runtime
+	compileOnly("com.terraformersmc:modmenu:${project.modmenu_version}") { transitive = false }
+	localRuntime("com.terraformersmc:modmenu:${project.modmenu_version}") { transitive = false }
+}
+
+// Client game tests: create a world, send messages, take screenshots (gradlew runClientGameTest)
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "aurorachat-test"
+		enableGameTests = false
+		enableClientGameTests = true
+		eula = true
+	}
+}
+
+processResources {
+	def version = project.version
+	def mcdep = project.ext.mcdep
+	inputs.property "version", version
+	inputs.property "mcdep", mcdep
+	filesMatching("fabric.mod.json") {
+		expand "version": version, "mcdep": mcdep
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+	it.options.encoding = 'UTF-8'
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
