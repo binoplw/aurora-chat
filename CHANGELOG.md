@@ -1,5 +1,12 @@
 # Aurora Chat — изменения
 
+## 2.27.1
+
+- Aurora Chat+ is a subscription on Boosty (250 ₽ / month); the shop button opens it directly
+- A chat message when an Aurora Chat+ key expires
+- Aurora Chat+ — подписка на Boosty (250 ₽ в месяц), кнопка в магазине ведёт прямо на неё
+- Сообщение в чате, когда срок ключа Aurora Chat+ закончился
+
 ## 2.27.0
 
 - Minecraft 26.1–26.1.2, 26.2 and 26.3 are supported

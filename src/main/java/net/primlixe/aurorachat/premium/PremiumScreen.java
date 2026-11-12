@@ -58,8 +58,8 @@ public class PremiumScreen extends Screen {
 		}
 		int half = (w - 4) / 2;
 		int y1 = yb - BTN - 4;
-		addRenderableWidget(new Pill(x, y1, half, BTN, I18n.t("♥ Купить ") + Premium.NAME, Style.PRIMARY, p -> Mc.openUri(Premium.SHOP_URL))
-				.tip("Откроется страница покупки в браузере"));
+		addRenderableWidget(new Pill(x, y1, half, BTN, I18n.t("♥ Оформить подписку"), Style.PRIMARY, p -> Mc.openUri(Premium.SHOP_URL))
+				.tip("Откроется страница подписки на Boosty"));
 		addRenderableWidget(new Pill(x + half + 4, y1, w - half - 4, BTN, I18n.t("⧉ Скопировать мой ник"), Style.SECONDARY, p -> {
 			String n = Premium.currentNick();
 			if (n != null) minecraft.keyboardHandler.setClipboard(n);
@@ -127,7 +127,7 @@ public class PremiumScreen extends Screen {
 			UI.text(g, font, UI.trim(font, I18n.t("бесплатно навсегда: окно, 3 темы, G / L"), cardW() - 2 * PAD - 16 - pw), x + pw + 6, y + 2, UI.MUTED, false);
 			y += 14;
 			String nick = Premium.currentNick();
-			UI.text(g, font, UI.trim(font, I18n.t("Купи на сайте, укажи ник ") + "§f" + (nick == null ? "?" : nick) + "§r" + I18n.t(" и вставь ключ ниже"),
+			UI.text(g, font, UI.trim(font, I18n.t("На Boosty укажи ник ") + "§f" + (nick == null ? "?" : nick) + "§r" + I18n.t(", ключ вставь ниже"),
 					cardW() - 2 * PAD - 8), x, y, UI.SUB, false);
 		}
 		if (msg != null) UI.centered(g, font, msg, (x0 + x1) / 2, Math.min(height - 10, y1 + 5), msgColor);

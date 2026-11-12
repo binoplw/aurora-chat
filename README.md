@@ -40,10 +40,10 @@
 ## Free and Aurora Chat+
 
 The basic chat is free: movable window, 3 themes, G / L channels, All / G / L tabs.
-**Aurora Chat+** (one-time key, tied to your Minecraft name) unlocks everything else — get it on the [website](https://binoplw.github.io/aurora-chat/#premium), then `/achat key <key>`.
+**Aurora Chat+** (subscription on Boosty, 250 ₽ / month; monthly key tied to your Minecraft name) unlocks everything else — get it on the [website](https://binoplw.github.io/aurora-chat/#premium), then `/achat key <key>`.
 This repository contains the free part; the code of Aurora Chat+ features is not published (stubs with the same API are in its place), so a build from source is the free edition.
 
-Базовый чат бесплатный. **Aurora Chat+** (разовый ключ на ник) открывает всё остальное. В репозитории — бесплатная часть, код функций Aurora Chat+ не публикуется.
+Базовый чат бесплатный. **Aurora Chat+** (подписка на Boosty, 250 ₽ в месяц; ключ на ник на месяц) открывает всё остальное. В репозитории — бесплатная часть, код функций Aurora Chat+ не публикуется.
 
 ## Requirements
 

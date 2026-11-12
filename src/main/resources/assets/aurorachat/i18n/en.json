@@ -1034,8 +1034,6 @@
  "Меню действий с игроком": "Player action wheel",
  "Эмодзи, ники по Tab": "Emoji, Tab name completion",
  "Отлично!": "Great!",
- "♥ Купить ": "♥ Buy ",
- "Откроется страница покупки в браузере": "Opens the purchase page in your browser",
  "⧉ Скопировать мой ник": "⧉ Copy my name",
  "Ник скопирован — укажи его при покупке": "Name copied — enter it when buying",
  "ключ AURORA-…": "key AURORA-…",
@@ -1046,10 +1044,7 @@
  "✔ Активирован: ": "✔ Activated: ",
  "Спасибо, что поддерживаешь мод! Открыто всё:": "Thank you for supporting the mod! Everything is unlocked:",
  "Сейчас бесплатная версия. Ключ открывает всё:": "This is the free version. A key unlocks everything:",
- "199 ₽ — навсегда": "$2.99 — forever",
  "бесплатно навсегда: окно, 3 темы, G / L": "free forever: window, 3 themes, G / L",
- "Купи на сайте, укажи ник ": "Buy on the website, enter the name ",
- " и вставь ключ ниже": " and paste the key below",
  "личная сборка": "personal build",
  " · навсегда": " · forever",
  " · до ": " · until ",
@@ -1071,5 +1066,11 @@
  "Цвета, прозрачность, скругление, раскладка": "Colors, opacity, corners, layout",
  "Доступно в Aurora Chat+ — нажми, чтобы узнать подробнее": "Available in Aurora Chat+ — click to learn more",
  "Этот ключ выдан нику %s, а ты играешь как %s": "This key was issued to %s, but you are playing as %s",
- "Срок ключа закончился %s": "The key expired on %s"
+ "Срок ключа закончился %s": "The key expired on %s",
+ "§d★ Срок Aurora Chat+ закончился (%s). §7Продлить: §f/achat shop": "§d★ Your Aurora Chat+ has expired (%s). §7Renew: §f/achat shop",
+ "250 ₽ в месяц": "250 ₽ / month",
+ "Откроется страница подписки на Boosty": "Opens the Boosty subscription page",
+ "На Boosty укажи ник ": "On Boosty, enter the name ",
+ ", ключ вставь ниже": ", then paste the key below",
+ "♥ Оформить подписку": "♥ Subscribe"
 }

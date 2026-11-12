@@ -521,7 +521,7 @@
       <div class="center reveal">
         <span class="kicker warm-text"><span data-en>Support the project</span><span data-ru>Поддержать проект</span></span>
         <h2><span data-en>Free to start. Everything with Aurora Chat+</span><span data-ru>Бесплатно для старта. Всё — с Aurora Chat+</span></h2>
-        <p class="sec-lead"><span data-en>The basic chat is free forever. Aurora Chat+ unlocks every feature with a one-time purchase — it keeps the mod alive and growing.</span><span data-ru>Базовый чат бесплатен навсегда. Aurora Chat+ открывает все функции разовой покупкой — так мод живёт и развивается.</span></p>
+        <p class="sec-lead"><span data-en>The basic chat is free forever. Aurora Chat+ unlocks every feature with a subscription on Boosty — it keeps the mod alive and growing.</span><span data-ru>Базовый чат бесплатен навсегда. Aurora Chat+ открывает все функции по подписке на Boosty — так мод живёт и развивается.</span></p>
       </div>
       <div class="goal reveal" id="goal" hidden></div>
       <div class="plans" id="plans"></div>
@@ -610,10 +610,10 @@
         en: 'Aurora Chat+ and tips · cards, SBP, PayPal', ru: 'Aurora Chat+ и донаты · карты, СБП' }
     ],
     premium: 'boosty',   // где покупают Aurora Chat+
-    premiumLink: 'https://boosty.to/r1zin1/purchase/4172833',  // прямая покупка Aurora Chat+ (199 ₽)
+    premiumLink: 'https://boosty.to/r1zin1/purchase/4172833?ssource=DIRECT&share=subscription_link',  // подписка Aurora Chat+ на Boosty
     tip: 'boosty',
     priceOneTime: { en: 'Any amount', ru: 'Любая сумма' },
-    pricePremium: { en: '$2.99', ru: '199 ₽' },
+    pricePremium: { en: '250 ₽', ru: '250 ₽' },
     // цель сбора: goal 0 — блок скрыт
     goal: { now: 0, goal: 0, currency: '₽', en: 'Monthly goal: a new big feature every month', ru: 'Цель месяца: большая новая функция каждый месяц' },
     // стена благодарности: { name: 'Ник', monthly: true } — monthly подсвечивает подписчиков
@@ -671,12 +671,12 @@
       '<li>' + L('G / L channels', 'Каналы G / L') + '</li><li>' + L('All, G, L tabs', 'Вкладки «Все», G, L') + '</li></ul>' +
       '<a class="btn primary" href="https://modrinth.com/mod/aurora-ryizen">' + L('Download', 'Скачать') + '</a></div>' +
     '<div class="plan hot reveal"><span class="badge">' + L('★ Everything', '★ Всё') + '</span><h3>Aurora Chat+</h3>' +
-      '<div class="price">' + L(SUPPORT.pricePremium.en, SUPPORT.pricePremium.ru) + ' <small>' + L('once', 'один раз') + '</small></div>' +
-      '<p class="note">' + L('Forever, key for your name', 'Навсегда, ключ на твой ник') + '</p><ul>' +
+      '<div class="price">' + L(SUPPORT.pricePremium.en, SUPPORT.pricePremium.ru) + ' <small>' + L('/ month', '/ мес') + '</small></div>' +
+      '<p class="note">' + L('Monthly on Boosty, key for your name', 'Подписка на Boosty, ключ на твой ник') + '</p><ul>' +
       '<li>' + L('Translator', 'Переводчик') + '</li><li>' + L('30+ themes and your own', '30+ тем и свои темы') + '</li>' +
       '<li>' + L('History and search', 'История и поиск') + '</li><li>' + L('Extra windows and tabs', 'Доп. окна и вкладки') + '</li>' +
       '<li>' + L('Palette, reminders, AFK reply, filters…', 'Палитра, напоминания, АФК, фильтры…') + '</li></ul>' +
-      btn(SUPPORT.premiumUrl, 'warm', 'Buy Aurora Chat+', 'Купить Aurora Chat+') + '</div>' +
+      btn(SUPPORT.premiumUrl, 'warm', 'Subscribe on Boosty', 'Оформить на Boosty') + '</div>' +
     '<div class="plan reveal"><h3>' + L('Tip', 'Донат') + '</h3><div class="price">' + L(SUPPORT.priceOneTime.en, SUPPORT.priceOneTime.ru) + '</div>' +
       '<p class="note">' + L('Just say thanks', 'Просто сказать спасибо') + '</p><ul>' +
       '<li>' + L('A coffee for the developer', 'Кофе разработчику') + '</li><li>' + L('Your name on this page', 'Твоё имя на этой странице') + '</li>' +
@@ -764,8 +764,8 @@
      'Free forever: the movable window, 3 themes (Business, Discord, Aurora), G / L channels and the All, G, L tabs. Aurora Chat+ adds everything else: translator, 30+ themes, history and search, extra windows and tabs, color palette, reminders, AFK reply, filters and more.',
      'Бесплатно навсегда: окно, 3 темы (Деловой, Discord, Aurora), каналы G / L и вкладки «Все», G, L. Aurora Chat+ открывает всё остальное: переводчик, 30+ тем, историю и поиск, доп. окна и вкладки, палитру, напоминания, АФК-ответ, фильтры и другое.'],
     ['How do I get the key?', 'Как получить ключ?',
-     'Pay 199 ₽ / $2.99 via the «Buy Aurora Chat+» button on Boosty and write your Minecraft name in the message. You will get a key within a day — enter it in game with /achat key, or paste it in /achat shop. The key is tied to your name and works forever.',
-     'Оплати 199 ₽ кнопкой «Купить Aurora Chat+» на Boosty и напиши в сообщении свой ник в Minecraft. В течение дня получишь ключ — введи его в игре командой /achat key или вставь в /achat shop. Ключ привязан к нику и действует навсегда.'],
+     'Subscribe to Aurora Chat+ on Boosty (250 ₽ / month) and write your Minecraft name in the message. You will get a key within a day — enter it in game with /achat key, or paste it in /achat shop. The key is tied to your name and works for a month; while the subscription is active, you get a new key every month.',
+     'Оформи подписку Aurora Chat+ на Boosty (250 ₽ в месяц) и напиши в сообщении свой ник в Minecraft. В течение дня получишь ключ — введи его в игре командой /achat key или вставь в /achat shop. Ключ привязан к нику и действует месяц; пока подписка активна, каждый месяц приходит новый.'],
     ['Is the source code open?', 'Код открыт?',
      'The free part is on GitHub. The code of Aurora Chat+ features is not published.',
      'Бесплатная часть — на GitHub. Код функций Aurora Chat+ не публикуется.']

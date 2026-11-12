@@ -17,12 +17,12 @@ import net.primlixe.aurorachat.config.ChatConfig;
  */
 public final class Premium {
 	/** Где купить: раздел сайта. */
-	public static final String SHOP_URL = "https://binoplw.github.io/aurora-chat/#premium";
+	public static final String SHOP_URL = "https://boosty.to/r1zin1/purchase/4172833?ssource=DIRECT&share=subscription_link";
 	public static final String NAME = "Aurora Chat+";
 	/** В этой сборке есть код платных функций (в версии с GitHub — нет, там заглушки). */
 	public static final boolean BUILT_IN = false;
 	/** Цена на экране магазина (переводится через i18n). */
-	public static final String PRICE = "199 ₽ — навсегда";
+	public static final String PRICE = "250 ₽ в месяц";
 
 	/** Темы, доступные без ключа. */
 	public static final Set<String> FREE_THEMES = Set.of("Деловой", "Discord", "Aurora");
@@ -75,6 +75,7 @@ public final class Premium {
 	/** Без ключа платные переключатели выключены, тема — из бесплатных (вызывается при загрузке и раз в секунду). */
 	public static void enforce(ChatConfig c) {
 		if (has()) return;
+		expiredNotice();
 		boolean changed = false;
 		for (String n : PAID_FLAGS) {
 			try {
@@ -89,6 +90,17 @@ public final class Premium {
 			changed = true;
 		}
 		if (changed) ChatConfig.save();
+	}
+
+	private static boolean expiredShown;
+
+	/** Пробный (срочный) ключ закончился — один раз сказать об этом в чате. */
+	private static void expiredNotice() {
+		LocalDate u = untilDate;
+		if (expiredShown || u == null || !LocalDate.now().isAfter(u) || Minecraft.getInstance().player == null) return;
+		expiredShown = true;
+		net.primlixe.aurorachat.compat.Mc.chat().addClientSystemMessage(net.minecraft.network.chat.Component.literal(
+				net.primlixe.aurorachat.ui.I18n.f("§d★ Срок Aurora Chat+ закончился (%s). §7Продлить: §f/achat shop", u.toString())));
 	}
 
 }
