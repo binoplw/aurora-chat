@@ -5,160 +5,321 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Aurora Chat — Minecraft chat mod</title>
 <meta name="description" content="A beautiful, smooth and customizable chat for Minecraft (Fabric, client-side): movable window, 30+ themes, G/L channels, tabs, translator, smart search and history.">
-<meta property="og:title" content="Aurora Chat">
-<meta property="og:description" content="Beautiful, smooth and customizable chat for Minecraft (Fabric, client-side).">
+<meta property="og:title" content="Aurora Chat — the chat Minecraft deserves">
+<meta property="og:description" content="Beautiful, smooth and customizable chat for Minecraft (Fabric, client-side). Free and open source.">
 <meta property="og:image" content="media/chat.png">
+<meta name="theme-color" content="#0a0b14">
 <link rel="icon" href="media/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b0c14;
-    --bg2: #11131f;
-    --card: #151826;
-    --line: #262a3d;
-    --text: #e9ebf5;
-    --sub: #a3a8c3;
-    --muted: #6f7491;
+    --bg: #0a0b14;
+    --bg2: #0f1120;
+    --card: rgba(22, 25, 42, .72);
+    --card-solid: #161a2b;
+    --line: rgba(255, 255, 255, .08);
+    --line2: rgba(255, 255, 255, .14);
+    --text: #eef0fa;
+    --sub: #aab0cc;
+    --muted: #747a99;
     --violet: #b18cff;
     --teal: #4fe3c1;
     --blue: #6cb4ff;
-    --radius: 16px;
+    --pink: #ff7ec8;
+    --amber: #ffb347;
+    --green: #5be39a;
+    --grad: linear-gradient(100deg, #b18cff 0%, #6cb4ff 45%, #4fe3c1 100%);
+    --grad-warm: linear-gradient(100deg, #ff7ec8 0%, #ffb347 100%);
+    --r: 18px;
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
+    margin: 0; overflow-x: hidden;
+    background: var(--bg); color: var(--text);
     font: 16px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   a { color: var(--blue); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
-  img.shot {
-    display: block; width: 100%; height: auto;
-    border-radius: 12px; border: 1px solid var(--line);
-    image-rendering: pixelated; background: #000;
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  .grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .warm-text { background: var(--grad-warm); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  img.shot { display: block; width: 100%; height: auto; image-rendering: pixelated; background: #000; }
+
+  /* ---------- северное сияние на фоне ---------- */
+  .sky { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+  .sky i {
+    position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%;
+    filter: blur(90px); opacity: .32; mix-blend-mode: screen;
+    animation: float 26s ease-in-out infinite alternate;
+  }
+  .sky i:nth-child(1) { background: #8f6bff; top: -25vmax; left: -15vmax; }
+  .sky i:nth-child(2) { background: #2fd4b0; top: -20vmax; right: -20vmax; animation-duration: 32s; animation-delay: -8s; }
+  .sky i:nth-child(3) { background: #ff6fb8; top: 40vh; left: 30vw; opacity: .14; animation-duration: 38s; animation-delay: -15s; }
+  .sky i:nth-child(4) { background: #4f8eff; bottom: -30vmax; right: 10vw; opacity: .2; animation-duration: 30s; }
+  @keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(6vw, 4vh) scale(1.1); }
+    100% { transform: translate(-4vw, 8vh) scale(.95); }
+  }
+  .stars { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1px 1px at 70% 15%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(1.5px 1.5px at 85% 60%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(1px 1px at 40% 75%, rgba(255,255,255,.3), transparent 60%),
+      radial-gradient(1px 1px at 10% 85%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(1.5px 1.5px at 55% 45%, rgba(255,255,255,.25), transparent 60%);
+    background-size: 600px 600px; opacity: .6;
   }
 
-  /* шапка */
+  /* ---------- шапка ---------- */
   header.top {
-    position: sticky; top: 0; z-index: 10;
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    background: rgba(11, 12, 20, .72); border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
+    background: rgba(10, 11, 20, .6); border-bottom: 1px solid var(--line);
   }
-  header.top .wrap { display: flex; align-items: center; gap: 12px; height: 60px; }
-  .brand { display: flex; align-items: center; gap: 10px; font: 700 18px "Space Grotesk", Inter, sans-serif; color: var(--text); }
-  .brand img { width: 28px; height: 28px; image-rendering: pixelated; }
+  header.top .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font: 700 19px "Space Grotesk", Inter, sans-serif; color: var(--text); }
+  .brand img { width: 30px; height: 30px; image-rendering: pixelated; filter: drop-shadow(0 0 10px rgba(177,140,255,.6)); }
   .brand:hover { text-decoration: none; }
-  nav.links { margin-left: auto; display: flex; gap: 6px; align-items: center; }
-  nav.links a { color: var(--sub); padding: 6px 10px; border-radius: 8px; font-size: 14px; }
-  nav.links a:hover { color: var(--text); background: var(--card); text-decoration: none; }
+  nav.links { margin-left: auto; display: flex; gap: 4px; align-items: center; }
+  nav.links a { color: var(--sub); padding: 7px 11px; border-radius: 10px; font-size: 14px; font-weight: 500; }
+  nav.links a:hover { color: var(--text); background: rgba(255,255,255,.06); text-decoration: none; }
+  nav.links a.support { color: #ffd1e8; }
   .lang {
-    border: 1px solid var(--line); background: var(--card); color: var(--text);
-    border-radius: 8px; padding: 5px 10px; font: 600 13px Inter, sans-serif; cursor: pointer;
+    border: 1px solid var(--line2); background: rgba(255,255,255,.04); color: var(--text);
+    border-radius: 10px; padding: 6px 11px; font: 600 13px Inter, sans-serif; cursor: pointer;
   }
+  .lang:hover { background: rgba(255,255,255,.09); }
 
-  /* главный экран */
-  .hero { position: relative; overflow: hidden; padding: 72px 0 40px; }
-  .hero::before {
-    content: ""; position: absolute; inset: -40% -10% auto -10%; height: 520px; z-index: -1;
-    background:
-      radial-gradient(40% 60% at 25% 40%, rgba(177, 140, 255, .35), transparent 70%),
-      radial-gradient(35% 55% at 70% 30%, rgba(79, 227, 193, .25), transparent 70%),
-      radial-gradient(30% 50% at 50% 70%, rgba(108, 180, 255, .2), transparent 70%);
-    filter: blur(20px);
-    animation: drift 14s ease-in-out infinite alternate;
+  /* ---------- главный экран ---------- */
+  .hero { padding: 84px 0 56px; position: relative; }
+  .hero-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 48px; align-items: center; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; border: 1px solid var(--line2); background: rgba(255,255,255,.04); color: var(--sub);
   }
-  @keyframes drift { from { transform: translateX(-3%) } to { transform: translateX(3%) } }
-  @media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } html { scroll-behavior: auto; } }
-  .hero-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 40px; align-items: center; }
+  .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
   h1 {
-    font: 700 clamp(40px, 6vw, 64px)/1.05 "Space Grotesk", Inter, sans-serif; margin: 0 0 16px;
-    background: linear-gradient(90deg, var(--violet), var(--teal)); -webkit-background-clip: text; background-clip: text; color: transparent;
+    font: 700 clamp(44px, 6.6vw, 76px)/1.02 "Space Grotesk", Inter, sans-serif; margin: 0 0 18px; letter-spacing: -.02em;
+    background: linear-gradient(100deg, #c9b0ff 0%, #7fc1ff 30%, #4fe3c1 55%, #ff9bd2 80%, #c9b0ff 100%);
+    background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shimmer 8s linear infinite;
   }
-  .lead { font-size: 19px; color: var(--sub); margin: 0 0 28px; max-width: 30em; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .lead { font-size: 19px; color: var(--sub); margin: 0 0 30px; max-width: 30em; }
+  .lead b { color: var(--text); font-weight: 600; }
   .cta { display: flex; flex-wrap: wrap; gap: 12px; }
   .btn {
-    display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px;
-    font-weight: 600; font-size: 15px; border: 1px solid var(--line); color: var(--text); background: var(--card);
+    position: relative; display: inline-flex; align-items: center; gap: 9px; padding: 13px 22px; border-radius: 14px;
+    font-weight: 600; font-size: 15px; border: 1px solid var(--line2); color: var(--text); background: rgba(255,255,255,.05);
+    transition: transform .2s, box-shadow .2s, background .2s;
   }
-  .btn:hover { text-decoration: none; border-color: #3a3f5a; }
-  .btn.primary { background: linear-gradient(90deg, #8f6bff, #3fcfae); border: 0; color: #0b0c14; }
-  .btn.primary:hover { filter: brightness(1.08); }
-  .meta { margin-top: 18px; color: var(--muted); font-size: 14px; }
-  .hero-media { position: relative; }
-  .hero-media img { box-shadow: 0 30px 80px rgba(0, 0, 0, .55), 0 0 0 1px rgba(177, 140, 255, .15); }
+  .btn:hover { text-decoration: none; transform: translateY(-2px); background: rgba(255,255,255,.09); }
+  .btn.primary { background: var(--grad); border: 0; color: #0a0b14; box-shadow: 0 10px 30px -8px rgba(111, 160, 255, .6); }
+  .btn.primary:hover { box-shadow: 0 16px 40px -8px rgba(111, 200, 255, .75); background: var(--grad); }
+  .btn.warm { background: var(--grad-warm); border: 0; color: #1a0b14; box-shadow: 0 10px 30px -8px rgba(255, 126, 200, .55); }
+  .btn.warm:hover { background: var(--grad-warm); box-shadow: 0 16px 40px -8px rgba(255, 150, 160, .7); }
+  .btn[aria-disabled="true"] { opacity: .55; pointer-events: none; }
+  .btn svg { width: 18px; height: 18px; }
+  .meta { margin-top: 20px; color: var(--muted); font-size: 14px; }
 
-  /* разделы */
-  section { padding: 64px 0; border-top: 1px solid var(--line); }
-  h2 { font: 700 32px/1.2 "Space Grotesk", Inter, sans-serif; margin: 0 0 10px; }
-  .sec-lead { color: var(--sub); margin: 0 0 28px; max-width: 42em; }
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+  /* рамка с переливающейся обводкой */
+  .frame { position: relative; border-radius: 18px; padding: 2px; background: conic-gradient(from var(--a, 0deg), #b18cff, #6cb4ff, #4fe3c1, #ff7ec8, #ffb347, #b18cff); animation: spin 8s linear infinite; }
+  .frame > * { border-radius: 16px; overflow: hidden; }
+  .frame::after { content: ""; position: absolute; inset: 12px; z-index: -1; border-radius: 30px; background: inherit; filter: blur(34px); opacity: .55; }
+  @property --a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+  @keyframes spin { to { --a: 360deg; } }
+  .window-bar { display: flex; gap: 6px; padding: 10px 12px; background: #0e1020; }
+  .window-bar span { width: 10px; height: 10px; border-radius: 50%; }
+  .window-bar span:nth-child(1) { background: #ff6b7a; } .window-bar span:nth-child(2) { background: #ffd166; } .window-bar span:nth-child(3) { background: #5be39a; }
+  .hero-media .frame { transform: perspective(1400px) rotateY(-7deg) rotateX(3deg); transition: transform .6s; }
+  .hero-media .frame:hover { transform: perspective(1400px) rotateY(0) rotateX(0); }
+
+  /* бегущая строка */
+  .marquee { border-block: 1px solid var(--line); background: rgba(255,255,255,.02); overflow: hidden; padding: 14px 0; }
+  .marquee-track { display: flex; gap: 12px; width: max-content; animation: marquee 40s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+  .chip { white-space: nowrap; padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; border: 1px solid; }
+  .c1 { color: #d6c4ff; border-color: rgba(177,140,255,.35); background: rgba(177,140,255,.1); }
+  .c2 { color: #b8e0ff; border-color: rgba(108,180,255,.35); background: rgba(108,180,255,.1); }
+  .c3 { color: #b6f5e6; border-color: rgba(79,227,193,.35); background: rgba(79,227,193,.1); }
+  .c4 { color: #ffd1e8; border-color: rgba(255,126,200,.35); background: rgba(255,126,200,.1); }
+  .c5 { color: #ffe1b8; border-color: rgba(255,179,71,.35); background: rgba(255,179,71,.1); }
+  .c6 { color: #c8f7da; border-color: rgba(91,227,154,.35); background: rgba(91,227,154,.1); }
+
+  /* ---------- разделы ---------- */
+  section { padding: 88px 0; position: relative; }
+  .kicker { display: inline-block; font: 600 13px Inter, sans-serif; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; }
+  h2 { font: 700 clamp(30px, 4vw, 42px)/1.12 "Space Grotesk", Inter, sans-serif; margin: 0 0 14px; letter-spacing: -.01em; }
+  .sec-lead { color: var(--sub); margin: 0 0 36px; max-width: 44em; font-size: 17px; }
+  .center { text-align: center; } .center .sec-lead { margin-inline: auto; }
+  .split { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
   .split.rev > :first-child { order: 2; }
-  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .feature { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
-  .feature .ico {
-    width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; font-size: 19px; margin-bottom: 12px;
-    background: rgba(177, 140, 255, .12); color: var(--violet);
+
+  /* бенто возможностей */
+  .bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .card {
+    position: relative; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); padding: 22px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); overflow: hidden;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
   }
-  .feature:nth-child(3n+2) .ico { background: rgba(79, 227, 193, .12); color: var(--teal); }
-  .feature:nth-child(3n) .ico { background: rgba(108, 180, 255, .12); color: var(--blue); }
-  .feature h3 { margin: 0 0 6px; font-size: 16px; }
-  .feature p { margin: 0; color: var(--sub); font-size: 14.5px; }
-  ul.ticks { list-style: none; padding: 0; margin: 0; }
-  ul.ticks li { padding: 6px 0 6px 28px; position: relative; color: var(--sub); }
-  ul.ticks li::before { content: "✦"; position: absolute; left: 4px; color: var(--teal); }
-  ul.ticks b { color: var(--text); font-weight: 600; }
-  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .gallery figure { margin: 0; }
-  .gallery figcaption { color: var(--muted); font-size: 14px; margin-top: 8px; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
-  .stat { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; }
-  .stat b { display: block; font: 700 28px "Space Grotesk", Inter, sans-serif; color: var(--teal); font-variant-numeric: tabular-nums; }
+  .card::before { content: ""; position: absolute; inset: 0; background: radial-gradient(400px 160px at var(--mx, 50%) -20%, var(--glow, rgba(177,140,255,.18)), transparent 70%); opacity: .9; pointer-events: none; }
+  .card:hover { transform: translateY(-4px); border-color: var(--line2); box-shadow: 0 20px 50px -20px var(--glow, rgba(177,140,255,.5)); }
+  .card.wide { grid-column: span 2; }
+  .card.full { grid-column: 1 / -1; }
+  .card .ico { position: relative; width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 21px; font-weight: 700; margin-bottom: 14px; color: #0a0b14; background: var(--ico, var(--grad)); box-shadow: 0 8px 20px -6px var(--glow); }
+  .card h3 { position: relative; margin: 0 0 6px; font-size: 17px; }
+  .card p { position: relative; margin: 0; color: var(--sub); font-size: 14.5px; }
+  .v { --glow: rgba(177,140,255,.35); --ico: linear-gradient(135deg, #c9b0ff, #8f6bff); }
+  .b { --glow: rgba(108,180,255,.35); --ico: linear-gradient(135deg, #a8d4ff, #4f8eff); }
+  .t { --glow: rgba(79,227,193,.35); --ico: linear-gradient(135deg, #9ff3dd, #22c49e); }
+  .p { --glow: rgba(255,126,200,.35); --ico: linear-gradient(135deg, #ffb8de, #ff5fae); }
+  .a { --glow: rgba(255,179,71,.35); --ico: linear-gradient(135deg, #ffd79e, #ff9a1f); }
+  .g { --glow: rgba(91,227,154,.35); --ico: linear-gradient(135deg, #a9f3c8, #2fc777); }
+  .card .mini { position: relative; margin-top: 16px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+
+  /* галерея тем */
+  .themes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .theme { position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #000; cursor: zoom-in; transition: transform .3s, box-shadow .3s; }
+  .theme img { transition: transform .5s; }
+  .theme:hover { transform: translateY(-5px) rotate(-.4deg); box-shadow: 0 24px 50px -18px var(--tc); }
+  .theme:hover img { transform: scale(1.06); }
+  .theme .label { position: absolute; left: 10px; bottom: 10px; padding: 5px 11px; border-radius: 999px; font-size: 13px; font-weight: 700; color: #fff; background: var(--tc); box-shadow: 0 4px 14px -4px var(--tc); }
+  .more-themes { margin-top: 22px; color: var(--sub); font-size: 15px; }
+
+  /* статистика */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 30px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; }
+  .stat b { display: block; font: 700 32px/1.1 "Space Grotesk", Inter, sans-serif; font-variant-numeric: tabular-nums; }
   .stat span { color: var(--sub); font-size: 14px; }
-  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-  ol.steps li { counter-increment: s; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px 14px 56px; position: relative; color: var(--sub); }
-  ol.steps li::before {
-    content: counter(s); position: absolute; left: 16px; top: 12px; width: 26px; height: 26px; border-radius: 8px;
-    display: grid; place-items: center; font-weight: 700; font-size: 14px; color: #0b0c14; background: var(--violet);
-  }
+  .stat:nth-child(1) b { color: var(--teal); } .stat:nth-child(2) b { color: var(--violet); } .stat:nth-child(3) b { color: var(--pink); }
+
+  ul.ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+  ul.ticks li { padding: 8px 0 8px 34px; position: relative; color: var(--sub); }
+  ul.ticks li::before { content: "✦"; position: absolute; left: 6px; top: 7px; font-size: 16px; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  ul.ticks b { color: var(--text); font-weight: 600; }
+
+  /* сравнение */
+  .compare { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--card); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+  .compare th, .compare td { padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--line); }
+  .compare tr:last-child td { border-bottom: 0; }
+  .compare th { font-size: 14px; color: var(--sub); font-weight: 600; background: rgba(255,255,255,.03); }
+  .compare th:nth-child(n+2), .compare td:nth-child(n+2) { text-align: center; width: 22%; }
+  .compare th.ours { color: var(--text); background: linear-gradient(180deg, rgba(177,140,255,.22), rgba(79,227,193,.12)); }
+  .compare td.ours { background: rgba(177,140,255,.06); }
+  .yes { color: var(--green); font-weight: 700; } .no { color: #ff6b7a; font-weight: 700; } .half { color: var(--amber); font-weight: 700; }
+
+  /* поддержка */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; align-items: stretch; }
+  .plan { position: relative; display: flex; flex-direction: column; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 24px; }
+  .plan.hot { border: 0; background: linear-gradient(var(--card-solid), var(--card-solid)) padding-box, var(--grad-warm) border-box; border: 2px solid transparent; box-shadow: 0 30px 70px -30px rgba(255,126,200,.6); }
+  .plan .badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); padding: 5px 13px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #1a0b14; background: var(--grad-warm); white-space: nowrap; }
+  .plan h3 { margin: 0 0 4px; font: 700 22px "Space Grotesk", Inter, sans-serif; }
+  .plan .price { font: 700 36px/1.1 "Space Grotesk", Inter, sans-serif; margin: 14px 0 4px; }
+  .plan .price small { font: 500 15px Inter, sans-serif; color: var(--sub); }
+  .plan .note { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+  .plan ul { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 8px; flex: 1; }
+  .plan li { position: relative; padding-left: 26px; color: var(--sub); font-size: 15px; }
+  .plan li::before { content: "✓"; position: absolute; left: 2px; font-weight: 700; color: var(--teal); }
+  .plan.hot li::before { color: var(--pink); }
+  .plan .btn { justify-content: center; }
+  .fair { margin-top: 22px; color: var(--muted); font-size: 14px; text-align: center; }
+
+  /* планы развития */
+  .road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .step { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+  .step .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; margin-bottom: 10px; }
+  .step.done .tag { color: #0a0b14; background: var(--green); }
+  .step.now .tag { color: #0a0b14; background: var(--amber); }
+  .step.next .tag { color: var(--sub); border: 1px solid var(--line2); }
+  .step h4 { margin: 0 0 4px; font-size: 16px; }
+  .step p { margin: 0; color: var(--sub); font-size: 14px; }
+
+  /* вопросы */
+  .faq { display: grid; gap: 10px; max-width: 820px; margin: 0 auto; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 0 20px; transition: border-color .2s; }
+  details[open] { border-color: rgba(177,140,255,.4); }
+  summary { cursor: pointer; list-style: none; padding: 17px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--violet); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin: 0 0 18px; color: var(--sub); }
+
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  ol.steps li { counter-increment: s; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 56px 20px 20px; position: relative; color: var(--sub); }
+  ol.steps li::before { content: counter(s); position: absolute; left: 20px; top: 18px; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-weight: 700; color: #0a0b14; background: var(--grad); }
   ol.steps b { color: var(--text); }
-  code { font: 14px ui-monospace, SFMono-Regular, Consolas, monospace; background: #1c2032; padding: 2px 6px; border-radius: 6px; color: var(--text); }
-  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  code { font: 14px ui-monospace, SFMono-Regular, Consolas, monospace; background: rgba(255,255,255,.07); padding: 2px 7px; border-radius: 6px; color: var(--text); }
+
+  .finale { margin: 0 20px; border-radius: 28px; padding: 64px 24px; text-align: center; position: relative; overflow: hidden;
+    background: radial-gradient(60% 120% at 20% 0%, rgba(177,140,255,.45), transparent 60%), radial-gradient(60% 120% at 80% 100%, rgba(79,227,193,.35), transparent 60%), #12142a;
+    border: 1px solid var(--line2); }
+  .finale h2 { margin-bottom: 10px; }
+  .finale .cta { justify-content: center; margin-top: 24px; }
+
+  footer { padding: 36px 0 48px; color: var(--muted); font-size: 14px; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; }
 
-  [data-ru] { display: none; }
-  html[lang="ru"] [data-en] { display: none; }
-  html[lang="ru"] [data-ru] { display: revert; }
+  /* увеличение картинок */
+  .lightbox { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; padding: 24px; background: rgba(5,6,12,.88); backdrop-filter: blur(6px); cursor: zoom-out; }
+  .lightbox.on { display: grid; }
+  .lightbox img { max-width: min(1200px, 100%); max-height: 90vh; width: auto; border-radius: 12px; image-rendering: pixelated; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
 
+  /* появление при прокрутке */
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  [data-ru] { display: none !important; }
+  html[lang="ru"] [data-en] { display: none !important; }
+  html[lang="ru"] [data-ru] { display: revert !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+    .js .reveal { opacity: 1; transform: none; }
+  }
+  @media (max-width: 960px) {
+    .bento, .themes, .road { grid-template-columns: repeat(2, 1fr); }
+    .plans { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+    .plan.hot { order: -1; }
+  }
   @media (max-width: 860px) {
-    .hero { padding-top: 40px; }
-    .hero-grid, .split { grid-template-columns: 1fr; gap: 24px; }
+    .hero { padding-top: 44px; }
+    .hero-grid, .split { grid-template-columns: 1fr; gap: 28px; }
     .split.rev > :first-child { order: 0; }
-    .features, .gallery { grid-template-columns: 1fr 1fr; }
+    .hero-media .frame { transform: none; }
     nav.links a.hide-sm { display: none; }
+    ol.steps { grid-template-columns: 1fr; }
   }
   @media (max-width: 560px) {
     .wrap { padding: 0 16px; }
-    .features, .gallery, .stats { grid-template-columns: 1fr; }
-    section { padding: 44px 0; }
-    h2 { font-size: 26px; }
+    .bento, .themes, .road, .stats { grid-template-columns: 1fr; }
+    .card.wide, .card.full { grid-column: auto; }
+    section { padding: 60px 0; }
     .lead { font-size: 17px; }
+    .compare th, .compare td { padding: 11px 10px; font-size: 14px; }
+    .finale { margin: 0 12px; padding: 44px 18px; }
   }
 </style>
 </head>
 <body>
+<div class="sky" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<div class="stars" aria-hidden="true"></div>
+
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#"><img src="media/icon.png" alt="">Aurora Chat</a>
     <nav class="links">
       <a class="hide-sm" href="#features"><span data-en>Features</span><span data-ru>Возможности</span></a>
       <a class="hide-sm" href="#themes"><span data-en>Themes</span><span data-ru>Темы</span></a>
-      <a class="hide-sm" href="#install"><span data-en>Install</span><span data-ru>Установка</span></a>
+      <a class="hide-sm" href="#faq">FAQ</a>
+      <a class="hide-sm support" href="#support"><span data-en>♥ Support</span><span data-ru>♥ Поддержать</span></a>
       <a href="https://github.com/binoplw/aurora-chat">GitHub</a>
       <button class="lang" id="lang" type="button" aria-label="Switch language">RU</button>
     </nav>
@@ -166,71 +327,121 @@
 </header>
 
 <main>
+  <!-- главный экран -->
   <div class="hero">
     <div class="wrap hero-grid">
-      <div>
+      <div class="reveal">
+        <div class="pills">
+          <span class="pill"><span class="dot"></span><span data-en>Free &amp; open source</span><span data-ru>Бесплатно и открыто</span></span>
+          <span class="pill">Fabric · 26.1.2</span>
+          <span class="pill">EN · RU</span>
+        </div>
         <h1>Aurora Chat</h1>
         <p class="lead">
-          <span data-en>A beautiful, smooth and highly customizable chat for Minecraft. Move it, resize it, theme it — and it never lags.</span>
-          <span data-ru>Красивый, плавный и настраиваемый чат для Minecraft. Двигай, растягивай, меняй тему — и ничего не лагает.</span>
+          <span data-en>The chat Minecraft deserves. <b>Move it, resize it, theme it</b> — 30+ themes, channels, tabs, a translator and smooth animations that <b>never lag</b>.</span>
+          <span data-ru>Чат, которого заслуживает Minecraft. <b>Двигай, растягивай, меняй тему</b> — 30+ тем, каналы, вкладки, переводчик и плавные анимации, которые <b>не лагают</b>.</span>
         </p>
         <div class="cta">
-          <a class="btn primary" href="https://modrinth.com/mod/aurora-chat"><span data-en>Download on Modrinth</span><span data-ru>Скачать на Modrinth</span></a>
-          <a class="btn" href="https://github.com/binoplw/aurora-chat"><span data-en>Source code</span><span data-ru>Исходники</span></a>
+          <a class="btn primary" href="https://modrinth.com/mod/aurora-chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+            <span data-en>Download free</span><span data-ru>Скачать бесплатно</span>
+          </a>
+          <a class="btn" href="#themes"><span data-en>See themes</span><span data-ru>Смотреть темы</span></a>
         </div>
-        <div class="meta">Fabric · Minecraft 26.1.2 · <span data-en>client-side · MIT</span><span data-ru>только клиент · MIT</span></div>
+        <div class="meta"><span data-en>Client-side · works on any server · MIT license</span><span data-ru>Только клиент · работает на любом сервере · лицензия MIT</span></div>
       </div>
-      <div class="hero-media">
-        <img class="shot" src="media/themes.gif" width="854" height="480" alt="Aurora Chat cycling through themes: Discord, Aurora, Telegram, Neon, Sunset, iMessage, Terminal, Business">
+      <div class="hero-media reveal">
+        <div class="frame"><div>
+          <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+          <img class="shot zoom" src="media/themes.gif" width="854" height="480" alt="Aurora Chat cycling through themes: Discord, Aurora, Telegram, Neon, Sunset, iMessage, Terminal, Business">
+        </div></div>
       </div>
     </div>
   </div>
 
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marquee">
+      <span class="chip c1">⠿ Movable window</span><span class="chip c2">◐ 30+ themes</span><span class="chip c3">G / L channels</span>
+      <span class="chip c4">⇄ Translator</span><span class="chip c5">⌕ Smart search</span><span class="chip c6">&amp; Gradients</span>
+      <span class="chip c1">☺ Emoji</span><span class="chip c2">⏱ Send later</span><span class="chip c3">☾ AFK reply</span>
+      <span class="chip c4">✦ Player wheel</span><span class="chip c5">⊘ Anti-spam</span><span class="chip c6">☰ History</span>
+    </div>
+  </div>
+
+  <!-- возможности -->
   <section id="features">
     <div class="wrap">
-      <h2><span data-en>Everything a chat should have</span><span data-ru>Всё, что должно быть в чате</span></h2>
-      <p class="sec-lead"><span data-en>Every feature can be turned off. Settings: <code>/achat</code> or the ⚙ button in the chat header.</span><span data-ru>Любую функцию можно выключить. Настройки — <code>/achat</code> или ⚙ в шапке чата.</span></p>
-      <div class="features">
-        <div class="feature"><div class="ico">⠿</div><h3><span data-en>Your window</span><span data-ru>Своё окно</span></h3>
-          <p><span data-en>Drag and resize like a messenger. Compact, Discord-like or Messenger layout with bubbles.</span><span data-ru>Двигай и растягивай как в мессенджере. Компактная раскладка, как в Discord или пузыри.</span></p></div>
-        <div class="feature"><div class="ico">◐</div><h3><span data-en>30+ themes</span><span data-ru>30+ тем</span></h3>
-          <p><span data-en>Discord, Telegram, iMessage, Twitch, Steam, Spotify and more. Share your own theme as a code.</span><span data-ru>Discord, Telegram, iMessage, Twitch, Steam, Spotify и другие. Своей темой можно поделиться кодом.</span></p></div>
-        <div class="feature"><div class="ico">G</div><h3><span data-en>Channels &amp; tabs</span><span data-ru>Каналы и вкладки</span></h3>
-          <p><span data-en>Global / local badges, tabs for DMs, clan and system, your own tabs and separate windows.</span><span data-ru>Значки G / L, вкладки ЛС, клан, система, свои вкладки и отдельные окна.</span></p></div>
-        <div class="feature"><div class="ico">⇄</div><h3><span data-en>Translator</span><span data-ru>Переводчик</span></h3>
-          <p><span data-en>Right-click any message to translate it, or translate what you type with one button.</span><span data-ru>ПКМ по сообщению — перевод, а кнопка ⇄ переводит то, что пишешь ты.</span></p></div>
-        <div class="feature"><div class="ico">⌕</div><h3><span data-en>Smart search &amp; history</span><span data-ru>Поиск и история</span></h3>
-          <p><span data-en>Filters like <code>nick:</code> <code>channel:</code> <code>date:</code>, chat kept across restarts, logs by server and day.</span><span data-ru>Фильтры <code>ник:</code> <code>канал:</code> <code>дата:</code>, чат сохраняется между запусками, журнал по дням.</span></p></div>
-        <div class="feature"><div class="ico">&amp;</div><h3><span data-en>Colors &amp; gradients</span><span data-ru>Цвета и градиенты</span></h3>
-          <p><span data-en>A palette with HEX colors and gradients in two clicks, live preview of your message.</span><span data-ru>Палитра с HEX и градиентами в два клика, предпросмотр сообщения.</span></p></div>
-        <div class="feature"><div class="ico">⏱</div><h3><span data-en>Helpers</span><span data-ru>Помощники</span></h3>
-          <p><span data-en>Scheduled messages, reminders, drafts, templates, AFK auto-reply, auto-greetings.</span><span data-ru>Отложенные сообщения, напоминания, черновики, шаблоны, АФК-автоответчик, приветствия.</span></p></div>
-        <div class="feature"><div class="ico">⊘</div><h3><span data-en>Clean chat</span><span data-ru>Чистый чат</span></h3>
-          <p><span data-en>Anti-spam, word filter, ignore list, merged repeats ×N, compact joins and leaves.</span><span data-ru>Антиспам, фильтр слов, игнор, склейка повторов ×N, компактные входы и выходы.</span></p></div>
-        <div class="feature"><div class="ico">✦</div><h3><span data-en>Player wheel</span><span data-ru>Круговое меню</span></h3>
-          <p><span data-en>Look at a player and hold G — hug, headpat or any command, with little effects.</span><span data-ru>Наведись на игрока и держи G — обнять, погладить или любая команда, со спецэффектами.</span></p></div>
+      <div class="center reveal">
+        <span class="kicker grad-text"><span data-en>Features</span><span data-ru>Возможности</span></span>
+        <h2><span data-en>Everything a chat should have</span><span data-ru>Всё, что должно быть в чате</span></h2>
+        <p class="sec-lead"><span data-en>Every feature can be turned off. Settings: <code>/achat</code> or ⚙ in the chat header.</span><span data-ru>Любую функцию можно выключить. Настройки — <code>/achat</code> или ⚙ в шапке чата.</span></p>
+      </div>
+      <div class="bento">
+        <div class="card wide v reveal"><div class="ico">⠿</div>
+          <h3><span data-en>A window that's yours</span><span data-ru>Окно, которое твоё</span></h3>
+          <p><span data-en>Drag it anywhere, resize from any edge, Ctrl+wheel for text size. Compact, Discord-like or Messenger layout with bubbles — yours on the right.</span><span data-ru>Перетаскивай куда угодно, тяни за любой край, Ctrl+колесо — размер текста. Компактная раскладка, как в Discord или пузыри — свои справа.</span></p>
+          <div class="mini"><img class="shot zoom" src="media/chat.png" width="854" height="480" loading="lazy" alt="Chat window"></div>
+        </div>
+        <div class="card t reveal"><div class="ico">G</div>
+          <h3><span data-en>Channels &amp; tabs</span><span data-ru>Каналы и вкладки</span></h3>
+          <p><span data-en>Global / local badges, tabs for DMs, clan, system and your own keywords, plus separate windows.</span><span data-ru>Значки G / L, вкладки ЛС, клан, система и свои по словам, плюс отдельные окна.</span></p></div>
+        <div class="card p reveal"><div class="ico">⇄</div>
+          <h3><span data-en>Translator</span><span data-ru>Переводчик</span></h3>
+          <p><span data-en>Right-click to translate any message. The ⇄ button translates what you type.</span><span data-ru>ПКМ — перевод любого сообщения. Кнопка ⇄ переводит то, что пишешь ты.</span></p></div>
+        <div class="card b reveal"><div class="ico">⌕</div>
+          <h3><span data-en>Smart search</span><span data-ru>Умный поиск</span></h3>
+          <p><span data-en><code>nick:</code> <code>channel:</code> <code>date:</code> <code>after:</code> — find anything. History survives restarts.</span><span data-ru><code>ник:</code> <code>канал:</code> <code>дата:</code> <code>после:</code> — найдёшь что угодно. История переживает перезапуск.</span></p></div>
+        <div class="card a reveal"><div class="ico">&amp;</div>
+          <h3><span data-en>Colors &amp; gradients</span><span data-ru>Цвета и градиенты</span></h3>
+          <p><span data-en>HEX colors and gradients in two clicks, 60+ ready gradients, live preview.</span><span data-ru>HEX и градиенты в два клика, 60+ готовых градиентов, предпросмотр.</span></p></div>
+        <div class="card g reveal"><div class="ico">⏱</div>
+          <h3><span data-en>Little helpers</span><span data-ru>Маленькие помощники</span></h3>
+          <p><span data-en>Scheduled messages, reminders, drafts, templates, AFK auto-reply, greetings.</span><span data-ru>Отложенные сообщения, напоминания, черновики, шаблоны, АФК-ответ, приветствия.</span></p></div>
+        <div class="card v reveal"><div class="ico">✦</div>
+          <h3><span data-en>Player wheel</span><span data-ru>Круговое меню</span></h3>
+          <p><span data-en>Look at a player, hold G — hug, headpat or any command, with hearts and sparks.</span><span data-ru>Наведись на игрока, держи G — обнять, погладить или любая команда, с сердечками.</span></p></div>
+        <div class="card full b reveal"><div class="ico">⊘</div>
+          <h3><span data-en>A clean, calm chat</span><span data-ru>Чистый и спокойный чат</span></h3>
+          <p><span data-en>Anti-spam and flood control, word filter, ignore list, CAPS calming, merged repeats ×N, compact joins and leaves, link previews that warn about phishing.</span><span data-ru>Антиспам и флуд, фильтр слов, игнор, приглушение КАПСА, склейка повторов ×N, компактные входы, предпросмотр ссылок с предупреждением о фишинге.</span></p></div>
       </div>
     </div>
   </section>
 
+  <!-- темы -->
+  <section id="themes">
+    <div class="wrap">
+      <div class="center reveal">
+        <span class="kicker warm-text"><span data-en>Themes</span><span data-ru>Темы</span></span>
+        <h2><span data-en>Make it look like you</span><span data-ru>Пусть выглядит как ты хочешь</span></h2>
+        <p class="sec-lead"><span data-en>One click to apply, then tweak any detail. Share your theme with friends as a short code.</span><span data-ru>Один клик — и тема применена, дальше можно подправить любую деталь. Своей темой делись с друзьями коротким кодом.</span></p>
+      </div>
+      <div class="themes" id="themeGrid"></div>
+      <p class="more-themes center reveal"><span data-en>…and 24 more: WhatsApp, Twitch, VK, Slack, YouTube, Steam, Spotify, Sakura, Ocean, Matrix, Gold, Ruby…</span><span data-ru>…и ещё 24: WhatsApp, Twitch, VK, Slack, YouTube, Steam, Spotify, Сакура, Океан, Матрица, Золото, Рубин…</span></p>
+    </div>
+  </section>
+
+  <!-- плавность -->
   <section id="smooth">
     <div class="wrap split">
-      <div>
-        <h2><span data-en>Smooth, not laggy</span><span data-ru>Плавно и без лагов</span></h2>
-        <p class="sec-lead"><span data-en>New messages slide in and gently lift the old ones. Everything moves with sub-pixel precision — no stepping, even at high GUI scale.</span><span data-ru>Новые сообщения плавно выезжают и мягко поднимают старые. Всё движется с точностью до долей пикселя — без «ступенек» даже на крупном масштабе.</span></p>
+      <div class="reveal">
+        <span class="kicker grad-text"><span data-en>Performance</span><span data-ru>Скорость</span></span>
+        <h2><span data-en>Silky smooth. Zero lag.</span><span data-ru>Плавно. Без лагов.</span></h2>
+        <p class="sec-lead"><span data-en>New messages slide in and gently lift the old ones. Everything moves with sub-pixel precision — no stepping, even at high GUI scale. Layouts are cached, files are written in the background.</span><span data-ru>Новые сообщения плавно выезжают и мягко поднимают старые. Всё движется с точностью до долей пикселя — без «ступенек» даже на крупном масштабе. Раскладка кэшируется, файлы пишутся в фоне.</span></p>
         <div class="stats">
-          <div class="stat"><b>~1 ms</b><span data-en>per frame, chat open</span><span data-ru>на кадр, чат открыт</span></div>
-          <div class="stat"><b>2000</b><span data-en>messages of history</span><span data-ru>сообщений истории</span></div>
-          <div class="stat"><b>0</b><span data-en>freezes on spam</span><span data-ru>фризов при спаме</span></div>
+          <div class="stat"><b data-count="1" data-prefix="~" data-suffix=" ms">~1 ms</b><span data-en>per frame, chat open</span><span data-ru>на кадр, чат открыт</span></div>
+          <div class="stat"><b data-count="2000">2000</b><span data-en>messages of history</span><span data-ru>сообщений истории</span></div>
+          <div class="stat"><b data-count="0">0</b><span data-en>freezes on spam</span><span data-ru>фризов при спаме</span></div>
         </div>
       </div>
-      <img class="shot" src="media/messages.gif" width="854" height="480" loading="lazy" alt="New chat messages smoothly sliding in">
+      <div class="reveal"><div class="frame"><div><img class="shot zoom" src="media/messages.gif" width="854" height="480" loading="lazy" alt="New chat messages smoothly sliding in"></div></div></div>
     </div>
   </section>
 
+  <!-- переводчик -->
   <section id="translate">
     <div class="wrap split rev">
-      <div>
+      <div class="reveal">
+        <span class="kicker warm-text"><span data-en>Translator</span><span data-ru>Переводчик</span></span>
         <h2><span data-en>Talk to anyone</span><span data-ru>Общайся с кем угодно</span></h2>
         <ul class="ticks">
           <li data-en><b>Right-click → Translate</b> — the translation appears right under the message</li>
@@ -239,61 +450,248 @@
           <li data-ru><b>Кнопка ⇄</b> — переводит то, что ты пишешь, до отправки</li>
           <li data-en><b>Auto-translate</b> — optional, for messages in another script</li>
           <li data-ru><b>Автоперевод</b> — по желанию, для сообщений на другой письменности</li>
-          <li data-en><b>English and Russian</b> interface, follows your game language</li>
-          <li data-ru>Интерфейс <b>на русском и английском</b>, как язык игры</li>
+          <li data-en><b>12 languages</b> to translate into, interface in English and Russian</li>
+          <li data-ru><b>12 языков</b> перевода, интерфейс на русском и английском</li>
         </ul>
       </div>
-      <img class="shot" src="media/translate.png" width="854" height="480" loading="lazy" alt="A Portuguese message with its English translation shown below">
+      <div class="reveal"><div class="frame"><div><img class="shot zoom" src="media/translate.png" width="854" height="480" loading="lazy" alt="A Portuguese message with its English translation"></div></div></div>
     </div>
   </section>
 
-  <section id="themes">
+  <!-- сравнение -->
+  <section id="compare">
     <div class="wrap">
-      <h2><span data-en>Settings that make sense</span><span data-ru>Понятные настройки</span></h2>
-      <p class="sec-lead"><span data-en>One window with a live preview, themes for the settings window itself, and plain words instead of cryptic options.</span><span data-ru>Одно окно с живым предпросмотром, свои темы для самого окна настроек и простые слова вместо непонятных опций.</span></p>
-      <div class="gallery">
-        <figure><img class="shot" src="media/settings-themes.png" width="854" height="480" loading="lazy" alt="Themes settings"><figcaption><span data-en>Themes and theme codes</span><span data-ru>Темы и коды тем</span></figcaption></figure>
-        <figure><img class="shot" src="media/settings-features.png" width="854" height="480" loading="lazy" alt="All features list"><figcaption><span data-en>All features in one list</span><span data-ru>Все функции одним списком</span></figcaption></figure>
-        <figure><img class="shot" src="media/settings-colors.png" width="854" height="480" loading="lazy" alt="Colors and gradients settings"><figcaption><span data-en>Colors and gradients</span><span data-ru>Цвета и градиенты</span></figcaption></figure>
+      <div class="center reveal">
+        <span class="kicker grad-text"><span data-en>Compare</span><span data-ru>Сравнение</span></span>
+        <h2><span data-en>Vanilla chat vs Aurora Chat</span><span data-ru>Обычный чат и Aurora Chat</span></h2>
+        <p class="sec-lead"></p>
+      </div>
+      <div class="reveal" style="overflow-x:auto">
+        <table class="compare">
+          <thead><tr><th></th><th>Vanilla</th><th class="ours">Aurora Chat</th></tr></thead>
+          <tbody id="compareBody"></tbody>
+        </table>
       </div>
     </div>
   </section>
 
+  <!-- поддержка -->
+  <section id="support">
+    <div class="wrap">
+      <div class="center reveal">
+        <span class="kicker warm-text"><span data-en>Support the project</span><span data-ru>Поддержать проект</span></span>
+        <h2><span data-en>Free forever. Powered by you.</span><span data-ru>Бесплатно навсегда. Держится на вас.</span></h2>
+        <p class="sec-lead"><span data-en>Aurora Chat is made by one person in their free time. If it makes your game nicer, you can help it grow — and get a few thank-you perks.</span><span data-ru>Aurora Chat делает один человек в свободное время. Если мод делает твою игру приятнее — можно помочь ему расти и получить пару приятных бонусов.</span></p>
+      </div>
+      <div class="plans" id="plans"></div>
+      <p class="fair reveal"><span data-en>Every feature of the mod is and stays free — support never unlocks gameplay.</span><span data-ru>Все функции мода бесплатны и останутся бесплатными — поддержка ничего не открывает в игре.</span></p>
+    </div>
+  </section>
+
+  <!-- планы -->
+  <section id="roadmap">
+    <div class="wrap">
+      <div class="center reveal">
+        <span class="kicker grad-text"><span data-en>Roadmap</span><span data-ru>Планы</span></span>
+        <h2><span data-en>What's next</span><span data-ru>Что дальше</span></h2>
+        <p class="sec-lead"><span data-en>Supporters vote on what comes first.</span><span data-ru>Что делать первым — решают те, кто поддерживает.</span></p>
+      </div>
+      <div class="road" id="road"></div>
+    </div>
+  </section>
+
+  <!-- вопросы -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="center reveal">
+        <span class="kicker warm-text">FAQ</span>
+        <h2><span data-en>Questions</span><span data-ru>Вопросы</span></h2>
+        <p class="sec-lead"></p>
+      </div>
+      <div class="faq" id="faqList"></div>
+    </div>
+  </section>
+
+  <!-- установка -->
   <section id="install">
     <div class="wrap">
-      <h2><span data-en>Install</span><span data-ru>Установка</span></h2>
-      <ol class="steps">
-        <li data-en>Install <b>Fabric Loader</b> for Minecraft 26.1.2 and the <a href="https://modrinth.com/mod/fabric-api">Fabric API</a> mod.</li>
-        <li data-ru>Поставь <b>Fabric Loader</b> для Minecraft 26.1.2 и мод <a href="https://modrinth.com/mod/fabric-api">Fabric API</a>.</li>
-        <li data-en>Download <b>Aurora Chat</b> from <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> and put the jar into your <code>mods</code> folder.</li>
-        <li data-ru>Скачай <b>Aurora Chat</b> на <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> и положи jar в папку <code>mods</code>.</li>
-        <li data-en>Open the game, press <b>T</b> — and type <code>/achat</code> for settings. <a href="https://modrinth.com/mod/modmenu">Mod Menu</a> is optional.</li>
-        <li data-ru>Запусти игру, нажми <b>T</b>, настройки — <code>/achat</code>. <a href="https://modrinth.com/mod/modmenu">Mod Menu</a> — по желанию.</li>
+      <div class="center reveal">
+        <span class="kicker grad-text"><span data-en>Install</span><span data-ru>Установка</span></span>
+        <h2><span data-en>Ready in a minute</span><span data-ru>Готово за минуту</span></h2>
+        <p class="sec-lead"></p>
+      </div>
+      <ol class="steps reveal">
+        <li><span data-en>Install <b>Fabric Loader</b> for Minecraft 26.1.2 and the <a href="https://modrinth.com/mod/fabric-api">Fabric API</a> mod.</span><span data-ru>Поставь <b>Fabric Loader</b> для Minecraft 26.1.2 и мод <a href="https://modrinth.com/mod/fabric-api">Fabric API</a>.</span></li>
+        <li><span data-en>Download <b>Aurora Chat</b> from <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> into your <code>mods</code> folder.</span><span data-ru>Скачай <b>Aurora Chat</b> с <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> в папку <code>mods</code>.</span></li>
+        <li><span data-en>Start the game, press <b>T</b>. Settings — <code>/achat</code>.</span><span data-ru>Запусти игру, нажми <b>T</b>. Настройки — <code>/achat</code>.</span></li>
       </ol>
     </div>
   </section>
+
+  <div class="finale reveal">
+    <h2><span data-en>Give your chat a glow-up</span><span data-ru>Сделай свой чат красивым</span></h2>
+    <p class="sec-lead" style="margin:0 auto"><span data-en>Free, open source, and made with care.</span><span data-ru>Бесплатно, с открытым кодом и с любовью к деталям.</span></p>
+    <div class="cta">
+      <a class="btn primary" href="https://modrinth.com/mod/aurora-chat"><span data-en>Download on Modrinth</span><span data-ru>Скачать на Modrinth</span></a>
+      <a class="btn warm" href="#support"><span data-en>♥ Support</span><span data-ru>♥ Поддержать</span></a>
+    </div>
+  </div>
 </main>
 
 <footer>
   <div class="wrap">
-    <span>Aurora Chat · MIT · <span data-en>made by</span><span data-ru>автор</span> PrimLixe</span>
-    <span><a href="https://github.com/binoplw/aurora-chat/issues"><span data-en>Report a bug</span><span data-ru>Сообщить о баге</span></a> · <a href="https://github.com/binoplw/aurora-chat/blob/main/CHANGELOG.md">Changelog</a></span>
+    <span>Aurora Chat · MIT · <span data-en>made by</span><span data-ru>автор</span> PrimLixe · <span data-en>Not affiliated with Mojang or Microsoft.</span><span data-ru>Не связано с Mojang и Microsoft.</span></span>
+    <span><a href="https://github.com/binoplw/aurora-chat/issues"><span data-en>Report a bug</span><span data-ru>Сообщить о баге</span></a> · <a href="https://github.com/binoplw/aurora-chat/blob/main/CHANGELOG.md">Changelog</a> · <a href="https://github.com/binoplw/aurora-chat">GitHub</a></span>
   </div>
 </footer>
 
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Image"><img alt=""></div>
+
 <script>
+  /* ======== НАСТРОЙКИ: ссылки на донат-площадки. Пусто — кнопка «Скоро». ======== */
+  var SUPPORT = {
+    oneTime: '',   // например https://boosty.to/<ник>/donate или https://ko-fi.com/<ник>
+    monthly: '',   // например https://boosty.to/<ник> или https://patreon.com/<ник>
+    priceOneTime: { en: 'Any amount', ru: 'Любая сумма' },
+    priceMonthly: { en: 'from $2', ru: 'от 150 ₽' },
+    perMonth: { en: '/ month', ru: '/ мес' }
+  };
+
+  var L = function (en, ru) { return '<span data-en>' + en + '</span><span data-ru>' + ru + '</span>'; };
+
+  // темы
+  var THEMES = [
+    ['discord', 'Discord', 'Discord', '#5865f2'], ['aurora', 'Aurora', 'Аврора', '#9b6bff'],
+    ['telegram', 'Telegram', 'Telegram', '#2aa3e0'], ['neon', 'Neon', 'Неон', '#ff3fa4'],
+    ['sunset', 'Sunset', 'Закат', '#ff8a3d'], ['imessage', 'iMessage', 'iMessage', '#1f8bff'],
+    ['terminal', 'Terminal', 'Терминал', '#22c55e'], ['business', 'Business', 'Деловой', '#6b86b3']
+  ];
+  document.getElementById('themeGrid').innerHTML = THEMES.map(function (t) {
+    return '<div class="theme reveal" style="--tc:' + t[3] + '"><img class="shot zoom" src="media/themes/' + t[0] + '.png" width="854" height="480" loading="lazy" alt="' + t[1] + ' theme">' +
+      '<span class="label">' + L(t[1], t[2]) + '</span></div>';
+  }).join('');
+
+  // сравнение
+  var Y = '<span class="yes">✓</span>', N = '<span class="no">✕</span>', H = '<span class="half">~</span>';
+  var ROWS = [
+    ['Move and resize the window', 'Двигать и растягивать окно', N, Y],
+    ['Themes, background, colors', 'Темы, фон, цвета', N, Y + ' 30+'],
+    ['Global / local channels and tabs', 'Каналы G / L и вкладки', N, Y],
+    ['Translate messages', 'Перевод сообщений', N, Y],
+    ['History after restart', 'История после перезапуска', N, Y],
+    ['Search in chat', 'Поиск по чату', N, Y],
+    ['HEX colors and gradients', 'HEX-цвета и градиенты', N, Y],
+    ['Smooth animations', 'Плавные анимации', H, Y],
+    ['Anti-spam and word filter', 'Антиспам и фильтр слов', N, Y],
+    ['Works on any server', 'Работает на любом сервере', Y, Y]
+  ];
+  document.getElementById('compareBody').innerHTML = ROWS.map(function (r) {
+    return '<tr><td>' + L(r[0], r[1]) + '</td><td>' + r[2] + '</td><td class="ours">' + r[3] + '</td></tr>';
+  }).join('');
+
+  // поддержка
+  function btn(url, cls, en, ru) {
+    return url ? '<a class="btn ' + cls + '" href="' + url + '" target="_blank" rel="noopener">' + L(en, ru) + '</a>'
+               : '<a class="btn ' + cls + '" aria-disabled="true">' + L('Coming soon', 'Скоро') + '</a>';
+  }
+  document.getElementById('plans').innerHTML =
+    '<div class="plan reveal"><h3>' + L('Player', 'Игрок') + '</h3><div class="price">' + L('Free', 'Бесплатно') + '</div>' +
+      '<p class="note">' + L('Everything, forever', 'Всё, навсегда') + '</p><ul>' +
+      '<li>' + L('All features of the mod', 'Все функции мода') + '</li><li>' + L('All 30+ themes', 'Все 30+ тем') + '</li>' +
+      '<li>' + L('Updates and fixes', 'Обновления и исправления') + '</li><li>' + L('Open source code', 'Открытый код') + '</li></ul>' +
+      '<a class="btn primary" href="https://modrinth.com/mod/aurora-chat">' + L('Download', 'Скачать') + '</a></div>' +
+    '<div class="plan hot reveal"><span class="badge">' + L('♥ Most loved', '♥ Любимый') + '</span><h3>' + L('Supporter', 'Поддержка') + '</h3>' +
+      '<div class="price">' + L(SUPPORT.priceMonthly.en, SUPPORT.priceMonthly.ru) + ' <small>' + L(SUPPORT.perMonth.en, SUPPORT.perMonth.ru) + '</small></div>' +
+      '<p class="note">' + L('Monthly, cancel any time', 'Каждый месяц, можно отменить') + '</p><ul>' +
+      '<li>' + L('Vote on the roadmap', 'Голос в выборе новых функций') + '</li><li>' + L('Early test builds', 'Ранние тестовые версии') + '</li>' +
+      '<li>' + L('Your name on this page', 'Твоё имя на этой странице') + '</li><li>' + L('Exclusive theme ideas first', 'Новые темы — первым') + '</li></ul>' +
+      btn(SUPPORT.monthly, 'warm', 'Become a supporter', 'Поддерживать') + '</div>' +
+    '<div class="plan reveal"><h3>' + L('Thank you', 'Спасибо') + '</h3><div class="price">' + L(SUPPORT.priceOneTime.en, SUPPORT.priceOneTime.ru) + '</div>' +
+      '<p class="note">' + L('One-time tip', 'Разовый донат') + '</p><ul>' +
+      '<li>' + L('A coffee for the developer', 'Кофе разработчику') + '</li><li>' + L('Your name on this page', 'Твоё имя на этой странице') + '</li>' +
+      '<li>' + L('Warm feelings guaranteed', 'Тёплые чувства гарантированы') + '</li></ul>' +
+      btn(SUPPORT.oneTime, '', 'Send a tip', 'Задонатить') + '</div>';
+
+  // планы развития
+  var ROAD = [
+    ['done', 'Released', 'Готово', 'English interface', 'Английский интерфейс', 'The mod follows the game language', 'Язык как в игре'],
+    ['done', 'Released', 'Готово', 'Translator', 'Переводчик', 'Messages, input line, log', 'Сообщения, строка ввода, журнал'],
+    ['next', 'Planned', 'В планах', 'Player profile', 'Досье игрока', 'Right-click a name: messages, when seen', 'ПКМ по нику: сообщения, когда был'],
+    ['next', 'Planned', 'В планах', 'DM conversations', 'Диалоги ЛС', 'A tab for every person, like a messenger', 'Вкладка на каждого, как в мессенджере']
+  ];
+  document.getElementById('road').innerHTML = ROAD.map(function (r) {
+    return '<div class="step ' + r[0] + ' reveal"><span class="tag">' + L(r[1], r[2]) + '</span><h4>' + L(r[3], r[4]) + '</h4><p>' + L(r[5], r[6]) + '</p></div>';
+  }).join('');
+
+  // вопросы
+  var FAQ = [
+    ['Does it work on any server?', 'Работает на любом сервере?',
+     'Yes. It is client-side only: the server doesn\'t need anything. Channels G / L are recognized automatically, the patterns can be changed in settings.',
+     'Да. Мод только для клиента — серверу ничего не нужно. Каналы G / L распознаются сами, шаблоны можно поменять в настройках.'],
+    ['Will it lower my FPS?', 'Упадёт ли FPS?',
+     'No. The chat takes about 1 ms per frame even with 2000 messages, and switches to a saving mode when FPS drops. Compatible with Sodium, Lithium, ImmediatelyFast.',
+     'Нет. Чат тратит около 1 мс на кадр даже с 2000 сообщений и сам переходит в экономный режим при низком FPS. Совместим с Sodium, Lithium, ImmediatelyFast.'],
+    ['Is it allowed on servers?', 'Не забанят за мод?',
+     'Aurora Chat only changes how the chat looks and feels on your side — it gives no gameplay advantage. Auto-replies are off by default; check your server rules before turning them on.',
+     'Aurora Chat меняет только вид и удобство чата у тебя — никакого преимущества в игре. Автоответы по умолчанию выключены; перед включением проверь правила сервера.'],
+    ['Does the translator send my messages anywhere?', 'Переводчик куда-то отправляет мои сообщения?',
+     'Only the message you choose to translate is sent to Google Translate. Auto-translate is off by default.',
+     'Только то сообщение, которое ты сам решил перевести, уходит в Google Translate. Автоперевод по умолчанию выключен.'],
+    ['Which Minecraft versions?', 'Какие версии Minecraft?',
+     'Minecraft 26.1.2 with Fabric. Fabric API is required, Mod Menu is optional.',
+     'Minecraft 26.1.2 на Fabric. Нужен Fabric API, Mod Menu — по желанию.'],
+    ['Is it really free?', 'Правда бесплатно?',
+     'Yes — every feature, forever, open source under MIT. Support is voluntary and never unlocks anything in the game.',
+     'Да — все функции, навсегда, открытый код под MIT. Поддержка добровольная и ничего в игре не открывает.']
+  ];
+  document.getElementById('faqList').innerHTML = FAQ.map(function (f) {
+    return '<details class="reveal"><summary>' + L(f[0], f[1]) + '</summary><p>' + L(f[2], f[3]) + '</p></details>';
+  }).join('');
+
+  // бегущая строка: два одинаковых ряда для бесконечной прокрутки
+  var m = document.getElementById('marquee'); m.innerHTML += m.innerHTML;
+
+  // язык
   (function () {
-    var root = document.documentElement, btn = document.getElementById('lang');
-    function set(l) {
-      root.lang = l;
-      btn.textContent = l === 'ru' ? 'EN' : 'RU';
-      try { localStorage.setItem('aurora-lang', l); } catch (e) {}
-    }
-    var saved = null;
-    try { saved = localStorage.getItem('aurora-lang'); } catch (e) {}
-    set(saved || ((navigator.language || '').toLowerCase().startsWith('ru') ? 'ru' : 'en'));
-    btn.addEventListener('click', function () { set(root.lang === 'ru' ? 'en' : 'ru'); });
+    var root = document.documentElement, b = document.getElementById('lang');
+    function set(l) { root.lang = l; b.textContent = l === 'ru' ? 'EN' : 'RU'; try { localStorage.setItem('aurora-lang', l); } catch (e) {} }
+    var saved = null; try { saved = localStorage.getItem('aurora-lang'); } catch (e) {}
+    set(saved || ((navigator.language || '').toLowerCase().indexOf('ru') === 0 ? 'ru' : 'en'));
+    b.addEventListener('click', function () { set(root.lang === 'ru' ? 'en' : 'ru'); });
   })();
+
+  // свечение карточек за мышью
+  document.querySelectorAll('.card').forEach(function (c) {
+    c.addEventListener('pointermove', function (e) { var r = c.getBoundingClientRect(); c.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%'); });
+  });
+
+  // увеличение картинок
+  var lb = document.getElementById('lightbox'), lbImg = lb.querySelector('img');
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('.zoom');
+    if (t) { lbImg.src = t.src; lbImg.alt = t.alt; lb.classList.add('on'); }
+    else if (e.target.closest('.lightbox')) lb.classList.remove('on');
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.classList.remove('on'); });
+
+  // появление при прокрутке + счётчики
+  document.documentElement.classList.add('js');
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+    es.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      en.target.classList.add('in'); io.unobserve(en.target);
+      en.target.querySelectorAll('[data-count]').forEach(count);
+    });
+  }, { threshold: .12 }) : null;
+  document.querySelectorAll('.reveal').forEach(function (el) { io ? io.observe(el) : el.classList.add('in'); });
+  function count(el) {
+    var to = +el.dataset.count, pre = el.dataset.prefix || '', suf = el.dataset.suffix || '', t0 = performance.now();
+    if (to < 2) return;
+    (function step(t) {
+      var k = Math.min(1, (t - t0) / 1200), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
+      el.textContent = pre + v + suf; if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  }
 </script>
 </body>
 </html>

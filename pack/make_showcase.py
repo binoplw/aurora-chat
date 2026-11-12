@@ -42,4 +42,9 @@ for tag, name in [("sc_translate", "translate.png"), ("sc_settings_themes", "set
     src = frames(tag)[0 if tag != "sc_theme" else 1]
     Image.open(src).convert("RGB").save(os.path.join(OUT, name), optimize=True)
     print(name)
+# каждая тема отдельно — для галереи тем (порядок как в ShowcaseTest.THEMES)
+os.makedirs(os.path.join(OUT, "themes"), exist_ok=True)
+for f, name in zip(frames("sc_theme"), ["discord", "aurora", "telegram", "neon", "sunset", "imessage", "terminal", "business"]):
+    Image.open(f).convert("RGB").save(os.path.join(OUT, "themes", name + ".png"), optimize=True)
+print("themes/*.png")
 shutil.copy2(os.path.join(ROOT, "src", "main", "resources", "assets", "aurorachat", "icon.png"), os.path.join(OUT, "icon.png"))
