@@ -1,0 +1,3 @@
+# The "Sponsor" button on the repository page leads to the support section of the site.
+# When there are accounts, add e.g.:  ko_fi: <nick>   (Boosty goes into custom)
+custom: ["https://binoplw.github.io/aurora-chat/#support"]

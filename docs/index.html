@@ -231,6 +231,46 @@
   .plan .btn { justify-content: center; }
   .fair { margin-top: 22px; color: var(--muted); font-size: 14px; text-align: center; }
 
+  /* ---------- поддержка: цель, площадки, бесплатные способы, стена ---------- */
+  .goal { max-width: 720px; margin: 0 auto 34px; padding: 20px 22px; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+  .goal .row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .goal b { font: 700 17px "Space Grotesk", Inter, sans-serif; }
+  .goal .sum { color: var(--sub); font-size: 14px; }
+  .goal .bar { position: relative; height: 12px; border-radius: 999px; background: rgba(255,255,255,.06); overflow: hidden; }
+  .goal .bar i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: inherit; background: var(--grad-warm); box-shadow: 0 0 18px rgba(255, 140, 180, .6); transition: width 1.6s cubic-bezier(.2,.8,.2,1); }
+  .goal .bar i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); animation: shine 2.6s linear infinite; }
+  @keyframes shine { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  .goal p { margin: 10px 0 0; color: var(--muted); font-size: 13.5px; }
+
+  .sub-h { text-align: center; margin: 56px 0 18px; font: 700 22px "Space Grotesk", Inter, sans-serif; }
+  .sub-h small { display: block; margin-top: 4px; font: 400 14.5px Inter, sans-serif; color: var(--muted); }
+  .pay { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .pay a { position: relative; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); color: var(--text); transition: transform .25s, border-color .25s, box-shadow .25s; }
+  .pay a:hover { text-decoration: none; transform: translateY(-3px); border-color: var(--pc); box-shadow: 0 16px 40px -18px var(--pc); }
+  .pay a[aria-disabled="true"] { pointer-events: none; opacity: .6; }
+  .pay .logo { flex: none; width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; font: 700 18px "Space Grotesk", Inter, sans-serif; color: #fff; background: var(--pc); }
+  .pay b { display: block; font-size: 15.5px; }
+  .pay span.d { display: block; color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .pay .soon { position: absolute; top: 10px; right: 12px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+
+  .free { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .free a, .free button { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 18px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: transform .25s, border-color .25s; }
+  .free a:hover, .free button:hover { text-decoration: none; transform: translateY(-3px); border-color: var(--line2); }
+  .free .e { font-size: 24px; line-height: 1; }
+  .free b { font-size: 15px; }
+  .free span.d { color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+  .wall { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .wall > span { padding: 8px 15px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-weight: 600; font-size: 14.5px; }
+  .wall > span.m { border: 0; background: linear-gradient(var(--card-solid), var(--card-solid)) padding-box, var(--grad-warm) border-box; border: 1.5px solid transparent; }
+  .wall > span.m::before { content: "♥ "; color: var(--pink); }
+  .wall .empty { padding: 18px 24px; border-radius: 16px; border: 1px dashed var(--line2); color: var(--muted); font-size: 14.5px; text-align: center; }
+
+  .toast { position: fixed; left: 50%; bottom: 28px; z-index: 50; transform: translate(-50%, 20px); opacity: 0; padding: 11px 18px; border-radius: 12px; background: var(--card-solid); border: 1px solid var(--line2); box-shadow: 0 18px 40px -12px rgba(0,0,0,.6); font-size: 14.5px; transition: opacity .25s, transform .25s; pointer-events: none; }
+  .toast.on { opacity: 1; transform: translate(-50%, 0); }
+  @media (max-width: 900px) { .free { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .free { grid-template-columns: 1fr; } }
+
   /* планы развития */
   .road { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
   .step { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
@@ -483,8 +523,21 @@
         <h2><span data-en>Free forever. Powered by you.</span><span data-ru>Бесплатно навсегда. Держится на вас.</span></h2>
         <p class="sec-lead"><span data-en>Aurora Chat is made by one person in their free time. If it makes your game nicer, you can help it grow — and get a few thank-you perks.</span><span data-ru>Aurora Chat делает один человек в свободное время. Если мод делает твою игру приятнее — можно помочь ему расти и получить пару приятных бонусов.</span></p>
       </div>
+      <div class="goal reveal" id="goal" hidden></div>
       <div class="plans" id="plans"></div>
       <p class="fair reveal"><span data-en>Every feature of the mod is and stays free — support never unlocks gameplay.</span><span data-ru>Все функции мода бесплатны и останутся бесплатными — поддержка ничего не открывает в игре.</span></p>
+
+      <h3 class="sub-h reveal"><span data-en>Where to support</span><span data-ru>Где поддержать</span>
+        <small><span data-en>Pick whatever is convenient for you</span><span data-ru>Выбирай, что удобнее</span></small></h3>
+      <div class="pay" id="pay"></div>
+
+      <h3 class="sub-h reveal"><span data-en>No money? Help for free</span><span data-ru>Без денег? Помоги бесплатно</span>
+        <small><span data-en>This helps just as much — more players find the mod</span><span data-ru>Это помогает не меньше — мод находят больше игроков</span></small></h3>
+      <div class="free" id="free"></div>
+
+      <h3 class="sub-h reveal" id="thanks"><span data-en>Wall of thanks</span><span data-ru>Стена благодарности</span>
+        <small><span data-en>Everyone who helped Aurora Chat grow</span><span data-ru>Все, кто помог Aurora Chat расти</span></small></h3>
+      <div class="wall reveal" id="wall"></div>
     </div>
   </section>
 
@@ -548,14 +601,29 @@
 <div class="lightbox" id="lightbox" role="dialog" aria-label="Image"><img alt=""></div>
 
 <script>
-  /* ======== НАСТРОЙКИ: ссылки на донат-площадки. Пусто — кнопка «Скоро». ======== */
+  /* ======== НАСТРОЙКИ ПОДДЕРЖКИ — всё меняется только здесь ========
+     Ссылка пустая — площадка показывается с пометкой «скоро» и не нажимается.
+     monthly / tip: какая площадка подписки и разовых донатов стоит на кнопках тарифов. */
   var SUPPORT = {
-    oneTime: '',   // например https://boosty.to/<ник>/donate или https://ko-fi.com/<ник>
-    monthly: '',   // например https://boosty.to/<ник> или https://patreon.com/<ник>
+    platforms: [
+      { id: 'boosty', name: 'Boosty', logo: 'B', color: '#f15f2c', url: '', // https://boosty.to/<ник>
+        en: 'Monthly or one-time · Russian cards', ru: 'Подписка или разово · карты РФ' },
+      { id: 'kofi', name: 'Ko-fi', logo: '☕', color: '#29abe0', url: '',   // https://ko-fi.com/<ник>
+        en: 'One-time tips · PayPal, cards worldwide', ru: 'Разовые донаты · PayPal и карты мира' },
+      { id: 'da', name: 'DonationAlerts', logo: 'D', color: '#f57c2b', url: '', // https://www.donationalerts.com/r/<ник>
+        en: 'Quick one-time tip', ru: 'Быстрый разовый донат' }
+    ],
+    monthly: 'boosty',
+    tip: 'kofi',
     priceOneTime: { en: 'Any amount', ru: 'Любая сумма' },
     priceMonthly: { en: 'from $2', ru: 'от 150 ₽' },
-    perMonth: { en: '/ month', ru: '/ мес' }
+    perMonth: { en: '/ month', ru: '/ мес' },
+    // цель сбора: goal 0 — блок скрыт
+    goal: { now: 0, goal: 0, currency: '₽', en: 'Monthly goal: a new big feature every month', ru: 'Цель месяца: большая новая функция каждый месяц' },
+    // стена благодарности: { name: 'Ник', monthly: true } — monthly подсвечивает подписчиков
+    supporters: []
   };
+  var SITE = 'https://binoplw.github.io/aurora-chat/';
 
   var L = function (en, ru) { return '<span data-en>' + en + '</span><span data-ru>' + ru + '</span>'; };
 
@@ -590,6 +658,12 @@
   }).join('');
 
   // поддержка
+  function plat(id) { for (var i = 0; i < SUPPORT.platforms.length; i++) if (SUPPORT.platforms[i].id === id) return SUPPORT.platforms[i]; return null; }
+  function urlOf(id) { var p = plat(id); if (p && p.url) return p.url;
+    for (var i = 0; i < SUPPORT.platforms.length; i++) if (SUPPORT.platforms[i].url) return SUPPORT.platforms[i].url; return ''; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  SUPPORT.monthlyUrl = urlOf(SUPPORT.monthly);
+  SUPPORT.oneTimeUrl = urlOf(SUPPORT.tip);
   function btn(url, cls, en, ru) {
     return url ? '<a class="btn ' + cls + '" href="' + url + '" target="_blank" rel="noopener">' + L(en, ru) + '</a>'
                : '<a class="btn ' + cls + '" aria-disabled="true">' + L('Coming soon', 'Скоро') + '</a>';
@@ -605,12 +679,61 @@
       '<p class="note">' + L('Monthly, cancel any time', 'Каждый месяц, можно отменить') + '</p><ul>' +
       '<li>' + L('Vote on the roadmap', 'Голос в выборе новых функций') + '</li><li>' + L('Early test builds', 'Ранние тестовые версии') + '</li>' +
       '<li>' + L('Your name on this page', 'Твоё имя на этой странице') + '</li><li>' + L('Exclusive theme ideas first', 'Новые темы — первым') + '</li></ul>' +
-      btn(SUPPORT.monthly, 'warm', 'Become a supporter', 'Поддерживать') + '</div>' +
+      btn(SUPPORT.monthlyUrl, 'warm', 'Become a supporter', 'Поддерживать') + '</div>' +
     '<div class="plan reveal"><h3>' + L('Thank you', 'Спасибо') + '</h3><div class="price">' + L(SUPPORT.priceOneTime.en, SUPPORT.priceOneTime.ru) + '</div>' +
       '<p class="note">' + L('One-time tip', 'Разовый донат') + '</p><ul>' +
       '<li>' + L('A coffee for the developer', 'Кофе разработчику') + '</li><li>' + L('Your name on this page', 'Твоё имя на этой странице') + '</li>' +
       '<li>' + L('Warm feelings guaranteed', 'Тёплые чувства гарантированы') + '</li></ul>' +
-      btn(SUPPORT.oneTime, '', 'Send a tip', 'Задонатить') + '</div>';
+      btn(SUPPORT.oneTimeUrl, '', 'Send a tip', 'Задонатить') + '</div>';
+
+  // цель сбора
+  (function () {
+    var g = SUPPORT.goal, el = document.getElementById('goal');
+    if (!g || !(g.goal > 0)) return;
+    var pct = Math.max(0, Math.min(100, Math.round(g.now / g.goal * 100)));
+    var n = function (v) { return Number(v).toLocaleString('ru-RU'); };
+    el.hidden = false;
+    el.innerHTML = '<div class="row"><b>' + L(esc(g.en), esc(g.ru)) + '</b><span class="sum">' + n(g.now) + ' / ' + n(g.goal) + ' ' + esc(g.currency) + ' · ' + pct + '%</span></div>' +
+      '<div class="bar"><i data-w="' + pct + '%"></i></div>' +
+      '<p>' + L('Updated by hand once in a while', 'Обновляется вручную время от времени') + '</p>';
+    var bar = el.querySelector('.bar i');
+    new IntersectionObserver(function (es, o) { if (es[0].isIntersecting) { bar.style.width = bar.dataset.w; o.disconnect(); } }).observe(el);
+  })();
+
+  // площадки
+  document.getElementById('pay').innerHTML = SUPPORT.platforms.map(function (p) {
+    var on = !!p.url;
+    return '<a class="reveal" style="--pc:' + p.color + '"' + (on ? ' href="' + esc(p.url) + '" target="_blank" rel="noopener"' : ' aria-disabled="true"') + '>' +
+      '<span class="logo">' + p.logo + '</span><span><b>' + esc(p.name) + '</b><span class="d">' + L(esc(p.en), esc(p.ru)) + '</span></span>' +
+      (on ? '' : '<span class="soon">' + L('soon', 'скоро') + '</span>') + '</a>';
+  }).join('');
+
+  // бесплатные способы помочь
+  var FREE = [
+    ['⭐', 'https://github.com/binoplw/aurora-chat', 'Star on GitHub', 'Звезда на GitHub', 'Lifts the mod in GitHub search', 'Поднимает мод в поиске GitHub'],
+    ['🔔', 'https://modrinth.com/mod/aurora-ryizen', 'Follow on Modrinth', 'Подписка на Modrinth', 'Every download also helps the author a little', 'Каждая загрузка тоже немного помогает автору'],
+    ['📣', '', 'Share with friends', 'Поделиться с друзьями', 'Send the link to your server or friends', 'Скинь ссылку на сервер или друзьям'],
+    ['🐞', 'https://github.com/binoplw/aurora-chat/issues', 'Ideas and bugs', 'Идеи и баги', 'Report a bug or suggest a feature or a translation', 'Сообщи о баге, предложи функцию или перевод']
+  ];
+  document.getElementById('free').innerHTML = FREE.map(function (f) {
+    var inner = '<span class="e">' + f[0] + '</span><b>' + L(f[2], f[3]) + '</b><span class="d">' + L(f[4], f[5]) + '</span>';
+    return f[1] ? '<a class="reveal" href="' + f[1] + '" target="_blank" rel="noopener">' + inner + '</a>'
+                : '<button type="button" class="reveal" id="shareBtn">' + inner + '</button>';
+  }).join('');
+  var toast = document.createElement('div'); toast.className = 'toast'; toast.setAttribute('role', 'status'); document.body.appendChild(toast);
+  function say(en, ru) { toast.innerHTML = L(en, ru); toast.classList.add('on'); clearTimeout(say.t); say.t = setTimeout(function () { toast.classList.remove('on'); }, 2200); }
+  document.getElementById('shareBtn').addEventListener('click', function () {
+    var data = { title: 'Aurora Chat', text: 'Beautiful chat mod for Minecraft', url: SITE };
+    if (navigator.share) { navigator.share(data).catch(function () {}); return; }
+    (navigator.clipboard ? navigator.clipboard.writeText(SITE) : Promise.reject()).then(
+      function () { say('Link copied', 'Ссылка скопирована'); },
+      function () { prompt('Aurora Chat', SITE); });
+  });
+
+  // стена благодарности
+  document.getElementById('wall').innerHTML = SUPPORT.supporters.length
+    ? SUPPORT.supporters.map(function (s) { return '<span' + (s.monthly ? ' class="m"' : '') + '>' + esc(s.name) + '</span>'; }).join('')
+    : '<div class="empty">' + L('Nobody here yet — your name could be the first ♥', 'Здесь пока пусто — твоё имя может стать первым ♥') + '</div>';
 
   // планы развития
   var ROAD = [
