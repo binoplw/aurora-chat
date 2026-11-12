@@ -610,6 +610,7 @@
         en: 'Aurora Chat+ and tips · cards, SBP, PayPal', ru: 'Aurora Chat+ и донаты · карты, СБП' }
     ],
     premium: 'boosty',   // где покупают Aurora Chat+
+    premiumLink: 'https://boosty.to/r1zin1/purchase/4172833',  // прямая покупка Aurora Chat+ (199 ₽)
     tip: 'boosty',
     priceOneTime: { en: 'Any amount', ru: 'Любая сумма' },
     pricePremium: { en: '$2.99', ru: '199 ₽' },
@@ -657,7 +658,7 @@
   function urlOf(id) { var p = plat(id); if (p && p.url) return p.url;
     for (var i = 0; i < SUPPORT.platforms.length; i++) if (SUPPORT.platforms[i].url) return SUPPORT.platforms[i].url; return ''; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  SUPPORT.premiumUrl = urlOf(SUPPORT.premium);
+  SUPPORT.premiumUrl = SUPPORT.premiumLink || urlOf(SUPPORT.premium);
   SUPPORT.oneTimeUrl = urlOf(SUPPORT.tip);
   function btn(url, cls, en, ru) {
     return url ? '<a class="btn ' + cls + '" href="' + url + '" target="_blank" rel="noopener">' + L(en, ru) + '</a>'
