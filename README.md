@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://binoplw.github.io/aurora-chat/">Website / Сайт</a> ·
-  <a href="https://modrinth.com/mod/aurora-chat">Modrinth</a> ·
+  <a href="https://modrinth.com/mod/aurora-ryizen">Modrinth</a> ·
   <a href="../../issues">Bug reports / Баги</a> ·
   <a href="CHANGELOG.md">Changelog</a>
 </p>

@@ -10,9 +10,9 @@
 """
 import json, os, re, subprocess, sys, urllib.request, urllib.error, uuid
 
-SLUG = "aurora-chat"
+SLUG = "aurora-ryizen"
 API = "https://api.modrinth.com/v2"
-UA = "PrimLixe/AuroraChat-publisher/1.0 (modrinth.com/mod/aurora-chat)"
+UA = "PrimLixe/AuroraChat-publisher/1.0 (modrinth.com/mod/aurora-ryizen)"
 FABRIC_API = "P7dR8mSH"   # fabric-api
 MOD_MENU = "mOgUt4GM"     # modmenu (необязательная)
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

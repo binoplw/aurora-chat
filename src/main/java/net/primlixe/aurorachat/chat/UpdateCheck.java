@@ -26,7 +26,7 @@ import java.time.Duration;
  * пишет в чат строку со ссылкой. Ничего не скачивает и не ставит сам. В запрос уходят только название мода и версия игры.
  */
 public final class UpdateCheck {
-	public static final String SLUG = "aurora-chat";
+	public static final String SLUG = "aurora-ryizen";
 	private static volatile String newer, newerUrl;
 	private static boolean shown, started;
 
