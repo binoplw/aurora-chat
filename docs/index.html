@@ -244,7 +244,7 @@
 
   .sub-h { text-align: center; margin: 56px 0 18px; font: 700 22px "Space Grotesk", Inter, sans-serif; }
   .sub-h small { display: block; margin-top: 4px; font: 400 14.5px Inter, sans-serif; color: var(--muted); }
-  .pay { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .pay { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; max-width: 460px; margin: 0 auto; }
   .pay a { position: relative; display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 16px; background: var(--card); border: 1px solid var(--line); color: var(--text); transition: transform .25s, border-color .25s, box-shadow .25s; }
   .pay a:hover { text-decoration: none; transform: translateY(-3px); border-color: var(--pc); box-shadow: 0 16px 40px -18px var(--pc); }
   .pay a[aria-disabled="true"] { pointer-events: none; opacity: .6; }
@@ -528,7 +528,7 @@
       <p class="fair reveal"><span data-en>The key is tied to your Minecraft name. After paying, you get it within a day and enter it in game: <code>/achat key …</code> or <code>/achat shop</code>.</span><span data-ru>Ключ привязан к нику в Minecraft. После оплаты получишь его в течение дня и введёшь в игре: <code>/achat key …</code> или <code>/achat shop</code>.</span></p>
 
       <h3 class="sub-h reveal"><span data-en>Where to support</span><span data-ru>Где поддержать</span>
-        <small><span data-en>Pick whatever is convenient for you</span><span data-ru>Выбирай, что удобнее</span></small></h3>
+        <small><span data-en>Payments go through Boosty — write your Minecraft name in the message</span><span data-ru>Оплата через Boosty — в сообщении укажи свой ник в Minecraft</span></small></h3>
       <div class="pay" id="pay"></div>
 
       <h3 class="sub-h reveal"><span data-en>No money? Help for free</span><span data-ru>Без денег? Помоги бесплатно</span>
@@ -606,15 +606,11 @@
      premium / tip: какая площадка стоит на кнопках «Купить Aurora Chat+» и «Задонатить» (пусто — первая со ссылкой). */
   var SUPPORT = {
     platforms: [
-      { id: 'boosty', name: 'Boosty', logo: 'B', color: '#f15f2c', url: '', // https://boosty.to/<ник>
-        en: 'Aurora Chat+ and tips · Russian cards', ru: 'Aurora Chat+ и донаты · карты РФ' },
-      { id: 'kofi', name: 'Ko-fi', logo: '☕', color: '#29abe0', url: '',   // https://ko-fi.com/<ник>
-        en: 'One-time tips · PayPal, cards worldwide', ru: 'Разовые донаты · PayPal и карты мира' },
-      { id: 'da', name: 'DonationAlerts', logo: 'D', color: '#f57c2b', url: 'https://www.donationalerts.com/r/ry1zen', // https://www.donationalerts.com/r/<ник>
-        en: 'Quick one-time tip', ru: 'Быстрый разовый донат' }
+      { id: 'boosty', name: 'Boosty', logo: 'B', color: '#f15f2c', url: 'https://boosty.to/r1zin1/donate',
+        en: 'Aurora Chat+ and tips · cards, SBP, PayPal', ru: 'Aurora Chat+ и донаты · карты, СБП' }
     ],
     premium: 'boosty',   // где покупают Aurora Chat+
-    tip: 'da',
+    tip: 'boosty',
     priceOneTime: { en: 'Any amount', ru: 'Любая сумма' },
     pricePremium: { en: '$2.99', ru: '199 ₽' },
     // цель сбора: goal 0 — блок скрыт
@@ -767,8 +763,8 @@
      'Free forever: the movable window, 3 themes (Business, Discord, Aurora), G / L channels and the All, G, L tabs. Aurora Chat+ adds everything else: translator, 30+ themes, history and search, extra windows and tabs, color palette, reminders, AFK reply, filters and more.',
      'Бесплатно навсегда: окно, 3 темы (Деловой, Discord, Aurora), каналы G / L и вкладки «Все», G, L. Aurora Chat+ открывает всё остальное: переводчик, 30+ тем, историю и поиск, доп. окна и вкладки, палитру, напоминания, АФК-ответ, фильтры и другое.'],
     ['How do I get the key?', 'Как получить ключ?',
-     'Pay 199 ₽ / $2.99 via the «Buy Aurora Chat+» button (Boosty or DonationAlerts) and write your Minecraft name in the message. You will get a key within a day — enter it in game with /achat key, or paste it in /achat shop. The key is tied to your name and works forever.',
-     'Оплати 199 ₽ кнопкой «Купить Aurora Chat+» (Boosty или DonationAlerts) и напиши в сообщении свой ник в Minecraft. В течение дня получишь ключ — введи его в игре командой /achat key или вставь в /achat shop. Ключ привязан к нику и действует навсегда.'],
+     'Pay 199 ₽ / $2.99 via the «Buy Aurora Chat+» button on Boosty and write your Minecraft name in the message. You will get a key within a day — enter it in game with /achat key, or paste it in /achat shop. The key is tied to your name and works forever.',
+     'Оплати 199 ₽ кнопкой «Купить Aurora Chat+» на Boosty и напиши в сообщении свой ник в Minecraft. В течение дня получишь ключ — введи его в игре командой /achat key или вставь в /achat shop. Ключ привязан к нику и действует навсегда.'],
     ['Is the source code open?', 'Код открыт?',
      'The free part is on GitHub. The code of Aurora Chat+ features is not published.',
      'Бесплатная часть — на GitHub. Код функций Aurora Chat+ не публикуется.']
